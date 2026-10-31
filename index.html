@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LanePing · Live dispatch board for trucking fleets</title>
+<meta name="description" content="LanePing turns your Samsara GPS into one live dispatch board: every truck, every load, on time or late, around the clock. Set up for you in a day.">
+<meta property="og:title" content="LanePing · Know which trucks will be late before the broker calls">
+<meta property="og:description" content="Live dispatch board on top of your Samsara GPS. Late-load alerts, ETAs to pickup and delivery, detention proof, AI rate con reading.">
+<meta name="theme-color" content="#0E1A2B">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 34'%3E%3Crect x='1' y='1' width='32' height='32' rx='8' fill='%2316263D'/%3E%3Cpath d='M11 26 L15 8 M23 26 L19 8' stroke='white' stroke-width='2.4' stroke-linecap='round'/%3E%3Cpath d='M17 11 V14 M17 18 V21' stroke='%23F2B21B' stroke-width='2.6' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&amp;family=Inter:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0;background:#F6F5F1}
+a{color:#0E1A2B}a:hover{color:#16263D}
+</style>
+<style>
+html{scroll-behavior:smooth} section{scroll-margin-top:84px}
+header{position:sticky;top:0;z-index:50}
+@media (max-width:640px){header nav a:not([href="#demo"]){display:none}header nav{gap:12px}}
+#board{transform:perspective(1200px) rotateX(calc(18deg * (1 - var(--hp,0)))) rotateY(calc(-8deg * (1 - var(--hp,0)))) scale(calc(.92 + .1 * var(--hp,0)));transform-origin:50% 0;will-change:transform}
+#story .stick{position:sticky;top:0;height:100vh;overflow:hidden}
+#story .shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(15,30,49,.92) 0%,rgba(15,30,49,.55) 38%,rgba(15,30,49,0) 62%);pointer-events:none}
+#story .caps{position:absolute;left:max(24px,6vw);top:50%;transform:translateY(-50%);width:min(520px,calc(100% - 48px))}
+#story .cap{position:absolute;left:0;top:50%;transform:translateY(calc(-50% + (1 - var(--o,0)) * 28px));opacity:var(--o,0);transition:none}
+#story .cap .kick{margin:0 0 10px;color:#F2B21B;font:600 14px Inter,sans-serif;letter-spacing:1.5px;text-transform:uppercase}
+#story .cap h2{margin:0 0 14px;font:700 clamp(38px,6vw,72px)/1.02 "Barlow Condensed",sans-serif}
+#story .cap p:last-child{margin:0;color:#C9D3E0;font:400 clamp(16px,1.6vw,20px)/1.5 Inter,sans-serif}
+#story .alert{position:absolute;right:max(16px,5vw);bottom:max(28px,8vh);display:flex;gap:12px;align-items:center;background:#FFFFFF;color:#0E1A2B;border-radius:14px;padding:14px 18px;box-shadow:0 20px 50px rgba(0,0,0,.45);border-left:0;opacity:var(--a,0);transform:translateY(calc((1 - var(--a,0)) * 40px)) scale(calc(.94 + .06 * var(--a,0)));max-width:calc(100% - 32px)}
+#story .alert b{display:block;font:700 17px Inter,sans-serif;color:#B42318}
+#story .alert span{font:500 14px Inter,sans-serif;color:#4A5566}
+#story .alert .dot{width:12px;height:12px;border-radius:50%;background:#E5484D;flex:0 0 auto;box-shadow:0 0 0 6px rgba(229,72,77,.18)}
+#say .stick2{position:sticky;top:0;height:100vh;display:flex;align-items:center;justify-content:center;padding:0 24px}
+#say .big{margin:0;max-width:1100px;text-align:center;font:700 clamp(48px,9vw,128px)/1 "Barlow Condensed",sans-serif;letter-spacing:.5px}
+#say .w{opacity:calc(.16 + .84 * var(--l,0));display:inline-block;transform:translateY(calc((1 - var(--l,0)) * 10px));color:#FFFFFF}
+#say .w:last-child,#say .w:nth-last-child(2){color:#F2B21B}
+@media (max-width:760px){#story .shade{background:linear-gradient(180deg,rgba(15,30,49,.95) 0%,rgba(15,30,49,.8) 30%,rgba(15,30,49,0) 46%)}#story .caps{top:22%;transform:none}#story .cap{top:0;transform:translateY(calc((1 - var(--o,0)) * 24px))}}
+@media (prefers-reduced-motion:reduce){#board{transform:none}#story,#say{height:auto!important}#story .stick{position:relative;height:100vh}#say .stick2{position:relative;height:70vh}}
+a[href="#demo"],button[type=submit]{transition:transform .15s ease,filter .15s ease,box-shadow .15s ease}
+a[href="#demo"]:hover,button[type=submit]:hover{transform:translateY(-2px);filter:brightness(1.06);box-shadow:0 8px 20px rgba(242,178,27,.35)}
+.fx{transition:transform .25s ease,box-shadow .25s ease}
+.fx:hover{transform:translateY(-5px);box-shadow:0 14px 32px rgba(14,26,43,.14)}
+.rv{transition:transform .7s cubic-bezier(.2,.7,.2,1),opacity .7s ease,box-shadow .25s ease}
+.rv.pre{transform:translateY(26px);opacity:.25}
+@keyframes rise{from{transform:translateY(14px);opacity:.3}to{transform:none;opacity:1}}
+@keyframes glow{0%,100%{box-shadow:0 0 0 0 rgba(194,54,31,.55)}50%{box-shadow:0 0 0 6px rgba(194,54,31,0)}}
+@media (prefers-reduced-motion:no-preference){
+  #top h1{animation:rise .8s cubic-bezier(.2,.7,.2,1) both}
+  #top h1+p{animation:rise .8s .12s cubic-bezier(.2,.7,.2,1) both}
+  #heroMap{animation:rise .9s .2s cubic-bezier(.2,.7,.2,1) both}
+  .latechip{animation:glow 1.8s ease-in-out infinite}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.rv,.fx,a[href="#demo"],button[type=submit]{transition:none}} input:focus,select:focus{outline:2px solid #1D4ED8;outline-offset:1px} button:disabled{opacity:.6;cursor:wait}</style>
+</head>
+<body>
+<div style="font-family: Inter, system-ui, sans-serif; color: #0E1A2B; background: #F6F5F1; min-height: 100vh">
+
+<header style="background: #0E1A2B; border-bottom: 1px solid #24384F">
+<div style="max-width: 1200px; margin: 0 auto; padding: 18px 24px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px">
+<a href="#top" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: #FFFFFF">
+<svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><rect x="1" y="1" width="32" height="32" rx="8" fill="#16263D" stroke="#3A5170"></rect><path d="M11 26 L15 8 M23 26 L19 8" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"></path><path d="M17 11 V14 M17 18 V21" stroke="#F2B21B" stroke-width="2.4" stroke-linecap="round"></path></svg>
+<span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: 0.5px">LanePing</span>
+</a>
+<nav aria-label="Main" style="display: flex; flex-wrap: wrap; align-items: center; gap: 24px; font-size: 15px; font-weight: 500">
+<a href="#features" style="color: #D5DDE8; text-decoration: none">Features</a>
+<a href="#how" style="color: #D5DDE8; text-decoration: none">How it works</a>
+<a href="#pricing" style="color: #D5DDE8; text-decoration: none">Pricing</a>
+<a href="#demo" style="background: #F2B21B; color: #0E1A2B; text-decoration: none; font-weight: 700; padding: 12px 18px; border-radius: 8px; min-height: 20px">Book a demo</a>
+</nav>
+</div>
+</header>
+
+<section id="top" style="background: #0E1A2B; color: #FFFFFF">
+<div style="max-width: 1200px; margin: 0 auto; padding: 72px 24px 88px; display: flex; flex-wrap: wrap; gap: 56px; align-items: center">
+<div style="flex: 1 1 440px; min-width: 0; display: flex; flex-direction: column; gap: 24px">
+<p style="margin: 0; font-size: 14px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: #F2B21B">Live dispatch board for trucking fleets</p>
+<h1 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 64px; line-height: 1.02; letter-spacing: 0.2px">Know which trucks will be late before the broker calls.</h1>
+<p style="margin: 0; font-size: 19px; line-height: 1.55; color: #C9D3E0; max-width: 560px">LanePing turns your Samsara GPS into one live board: every truck, every load, on time or late, around the clock. We set it up for you. No new hardware, nothing to install.</p>
+<div style="display: flex; flex-wrap: wrap; gap: 12px; padding-top: 8px">
+<a href="#demo" style="background: #F2B21B; color: #0E1A2B; text-decoration: none; font-weight: 700; font-size: 17px; padding: 15px 24px; border-radius: 8px">Book a 15-minute demo</a>
+<a href="#how" style="color: #FFFFFF; text-decoration: none; font-weight: 600; font-size: 17px; padding: 14px 22px; border-radius: 8px; border: 1px solid #3A5170">See how it works</a>
+</div>
+<p style="margin: 0; font-size: 14px; color: #9FB0C5">Works with Samsara today. More ELDs on request.</p>
+</div>
+
+<div id="board" style="flex: 1 1 520px; min-width: 0; background: #16263D; border: 1px solid #24384F; border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; flex-wrap: wrap; gap: 8px; font-size: 13px; font-weight: 600">
+<span style="background: #FFFFFF; color: #0E1A2B; border-radius: 999px; padding: 6px 12px">Late <b style="color: #C2361F">1</b></span>
+<span style="background: #FFFFFF; color: #0E1A2B; border-radius: 999px; padding: 6px 12px">At risk <b style="color: #8F6100">1</b></span>
+<span style="background: #FFFFFF; color: #0E1A2B; border-radius: 999px; padding: 6px 12px">On time <b style="color: #1E7A46">2</b></span>
+<span style="background: #FFFFFF; color: #0E1A2B; border-radius: 999px; padding: 6px 12px">Empty trucks <b>5</b></span>
+</div>
+<svg id="heroMap" viewBox="0 0 560 250" style="width: 100%; height: auto; display: block; border-radius: 10px; background: #E9EDF1" role="img" aria-label="Map preview: trucks on their routes, one late truck shown in red">
+<path d="M0 60 C120 40 200 90 300 70 S480 30 560 55" stroke="#FFFFFF" stroke-width="7" fill="none"></path>
+<path d="M40 250 C90 180 140 150 220 140 S380 120 430 0" stroke="#FFFFFF" stroke-width="7" fill="none"></path>
+<path d="M0 190 C140 200 260 170 340 190 S480 220 560 200" stroke="#FFFFFF" stroke-width="7" fill="none"></path>
+<path d="M120 0 C130 80 180 160 170 250" stroke="#FFFFFF" stroke-width="5" fill="none"></path>
+<path d="M220 140 C300 132 360 125 395 80" stroke="#C2361F" stroke-width="4" stroke-dasharray="8 6" fill="none"><animate attributeName="stroke-dashoffset" from="0" to="-28" dur="1.2s" repeatCount="indefinite"></animate></path>
+<rect x="388" y="68" width="18" height="18" rx="3" fill="#0E1A2B"></rect>
+<text x="397" y="81" font-size="11" font-family="Inter, sans-serif" font-weight="700" fill="#FFFFFF" text-anchor="middle">P</text>
+<circle cx="220" cy="140" r="12" fill="none" stroke="#C2361F" stroke-width="3"><animate attributeName="r" values="12;30" dur="1.8s" repeatCount="indefinite"></animate><animate attributeName="opacity" values=".8;0" dur="1.8s" repeatCount="indefinite"></animate></circle>
+<rect x="209" y="129" width="22" height="22" rx="4" fill="#C2361F" stroke="#FFFFFF" stroke-width="2"></rect>
+<rect x="196" y="102" width="48" height="20" rx="4" fill="#C2361F"></rect>
+<text x="220" y="116" font-size="12" font-family="Inter, sans-serif" font-weight="700" fill="#FFFFFF" text-anchor="middle">202</text>
+<g class="truck"><circle cx="0" cy="0" r="9" fill="#22C55E" stroke="#1D4ED8" stroke-width="2.5"></circle><text x="0" y="-18" font-size="12" font-family="Inter, sans-serif" font-weight="700" fill="#0E1A2B" text-anchor="middle">101</text><animateMotion dur="22s" begin="-11.5s" repeatCount="indefinite" path="M0 60 C120 40 200 90 300 70 S480 30 560 55"></animateMotion></g>
+<g class="truck"><circle cx="0" cy="0" r="9" fill="#22C55E" stroke="#1D4ED8" stroke-width="2.5"></circle><text x="0" y="-18" font-size="12" font-family="Inter, sans-serif" font-weight="700" fill="#0E1A2B" text-anchor="middle">303</text><animateMotion dur="28s" begin="-17s" repeatCount="indefinite" path="M0 190 C140 200 260 170 340 190 S480 220 560 200"></animateMotion></g>
+<rect x="470" y="40" width="16" height="16" rx="3" fill="#A3ABB6"></rect>
+<text x="478" y="30" font-size="12" font-family="Inter, sans-serif" font-weight="700" fill="#5B6677" text-anchor="middle">777</text>
+<rect x="80" y="188" width="16" height="16" rx="3" fill="#0E1A2B"></rect>
+<text x="88" y="178" font-size="12" font-family="Inter, sans-serif" font-weight="700" fill="#0E1A2B" text-anchor="middle">592</text>
+</svg>
+<div style="background: #FFF6F4; border-radius: 10px; border-left: 0; padding: 14px 16px; display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap">
+<span style="font-weight: 700; font-size: 16px; color: #0E1A2B">202 <span style="font-weight: 500; font-size: 13px; color: #4A5566">Load #B-200</span></span>
+<span class="latechip" style="background: #C2361F; color: #FFFFFF; font-size: 12px; font-weight: 700; border-radius: 999px; padding: 4px 10px">Late for pickup</span>
+</div>
+<div style="font-size: 14px; color: #0E1A2B; display: flex; flex-wrap: wrap; gap: 4px 14px"><b>To pickup</b><span>700 mi</span><span>ETA 5:23 PM</span><b style="color: #C2361F">Will arrive 11h 36m late</b></div>
+</div>
+<div style="background: #FFFFFF; border-radius: 10px; padding: 14px 16px; display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap">
+<span style="font-weight: 700; font-size: 16px; color: #0E1A2B">303 <span style="font-weight: 500; font-size: 13px; color: #4A5566">Load #C-300</span></span>
+<span style="background: #1E7A46; color: #FFFFFF; font-size: 12px; font-weight: 700; border-radius: 999px; padding: 4px 10px">On time</span>
+</div>
+<div style="font-size: 14px; color: #0E1A2B; display: flex; flex-wrap: wrap; gap: 4px 14px"><b>To next delivery</b><span>611 mi</span><span>ETA 3:52 PM</span><b style="color: #1E7A46">1h 16m to spare</b></div>
+</div>
+</div>
+</div>
+</section>
+
+<section id="story" aria-label="How LanePing catches a late load" style="position:relative;height:320vh;background:#0F1E31;color:#FFFFFF">
+<div class="stick">
+<svg id="world-svg" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="position:absolute;inset:0;width:100%;height:100%"><rect width="1200" height="700" fill="#0F1E31"></rect><g id="world"><path d="M-40 120 C220 80 420 170 640 130 S1000 60 1240 110" stroke="#22374F" stroke-width="16" fill="none" stroke-linecap="round"></path><path d="M-40 120 C220 80 420 170 640 130 S1000 60 1240 110" stroke="#2E4766" stroke-width="2" fill="none" stroke-dasharray="10 14"></path><path d="M-40 560 C260 600 520 520 720 560 S1000 640 1240 590" stroke="#22374F" stroke-width="16" fill="none" stroke-linecap="round"></path><path d="M-40 560 C260 600 520 520 720 560 S1000 640 1240 590" stroke="#2E4766" stroke-width="2" fill="none" stroke-dasharray="10 14"></path><path d="M180 -40 C220 160 300 330 280 740" stroke="#22374F" stroke-width="16" fill="none" stroke-linecap="round"></path><path d="M180 -40 C220 160 300 330 280 740" stroke="#2E4766" stroke-width="2" fill="none" stroke-dasharray="10 14"></path><path d="M1020 -40 C990 200 1060 420 1000 740" stroke="#22374F" stroke-width="16" fill="none" stroke-linecap="round"></path><path d="M1020 -40 C990 200 1060 420 1000 740" stroke="#2E4766" stroke-width="2" fill="none" stroke-dasharray="10 14"></path><path d="M-40 330 C200 300 420 360 640 380 S980 420 1240 360" stroke="#22374F" stroke-width="16" fill="none" stroke-linecap="round"></path><path d="M-40 330 C200 300 420 360 640 380 S980 420 1240 360" stroke="#2E4766" stroke-width="2" fill="none" stroke-dasharray="10 14"></path><path d="M520 740 C560 600 600 480 640 380 S760 160 820 -40" stroke="#22374F" stroke-width="16" fill="none" stroke-linecap="round"></path><path d="M520 740 C560 600 600 480 640 380 S760 160 820 -40" stroke="#2E4766" stroke-width="2" fill="none" stroke-dasharray="10 14"></path><path d="M640 380 C720 330 820 280 900 230" stroke="#E5484D" stroke-width="5" stroke-dasharray="10 8" fill="none"><animate attributeName="stroke-dashoffset" from="0" to="-36" dur="1.3s" repeatCount="indefinite"></animate></path><g transform="translate(900 230)"><rect x="-14" y="-14" width="28" height="28" rx="6" fill="#F2B21B"></rect><text y="6" text-anchor="middle" font-size="16" font-family="Inter, sans-serif" font-weight="700" fill="#0E1A2B">P</text></g><g><circle r="10" fill="#22C55E" stroke="#0F1E31" stroke-width="3"></circle><text y="-18" text-anchor="middle" font-size="14" font-family="Inter, sans-serif" font-weight="700" fill="#C9D3E0">114</text><animateMotion dur="26s" begin="-3s" repeatCount="indefinite" path="M-40 120 C220 80 420 170 640 130 S1000 60 1240 110"></animateMotion></g><g><circle r="10" fill="#22C55E" stroke="#0F1E31" stroke-width="3"></circle><text y="-18" text-anchor="middle" font-size="14" font-family="Inter, sans-serif" font-weight="700" fill="#C9D3E0">227</text><animateMotion dur="26s" begin="-16s" repeatCount="indefinite" path="M-40 120 C220 80 420 170 640 130 S1000 60 1240 110"></animateMotion></g><g><circle r="10" fill="#22C55E" stroke="#0F1E31" stroke-width="3"></circle><text y="-18" text-anchor="middle" font-size="14" font-family="Inter, sans-serif" font-weight="700" fill="#C9D3E0">305</text><animateMotion dur="32s" begin="-10s" repeatCount="indefinite" path="M-40 560 C260 600 520 520 720 560 S1000 640 1240 590"></animateMotion></g><g><circle r="10" fill="#22C55E" stroke="#0F1E31" stroke-width="3"></circle><text y="-18" text-anchor="middle" font-size="14" font-family="Inter, sans-serif" font-weight="700" fill="#C9D3E0">418</text><animateMotion dur="32s" begin="-25s" repeatCount="indefinite" path="M-40 560 C260 600 520 520 720 560 S1000 640 1240 590"></animateMotion></g><g><circle r="10" fill="#22C55E" stroke="#0F1E31" stroke-width="3"></circle><text y="-18" text-anchor="middle" font-size="14" font-family="Inter, sans-serif" font-weight="700" fill="#C9D3E0">533</text><animateMotion dur="24s" begin="-6s" repeatCount="indefinite" path="M180 -40 C220 160 300 330 280 740"></animateMotion></g><g><circle r="10" fill="#22C55E" stroke="#0F1E31" stroke-width="3"></circle><text y="-18" text-anchor="middle" font-size="14" font-family="Inter, sans-serif" font-weight="700" fill="#C9D3E0">612</text><animateMotion dur="30s" begin="-19s" repeatCount="indefinite" path="M1020 -40 C990 200 1060 420 1000 740"></animateMotion></g><g><circle r="10" fill="#22C55E" stroke="#0F1E31" stroke-width="3"></circle><text y="-18" text-anchor="middle" font-size="14" font-family="Inter, sans-serif" font-weight="700" fill="#C9D3E0">749</text><animateMotion dur="28s" begin="-21s" repeatCount="indefinite" path="M-40 330 C200 300 420 360 640 380 S980 420 1240 360"></animateMotion></g><g transform="translate(1080 470)"><rect x="-10" y="-10" width="20" height="20" rx="4" fill="#5B6677"></rect><text y="-18" text-anchor="middle" font-size="14" font-family="Inter, sans-serif" font-weight="700" fill="#7F8B9C">861</text></g><g transform="translate(90 440)"><rect x="-10" y="-10" width="20" height="20" rx="4" fill="#0B1625" stroke="#3A5170" stroke-width="2"></rect><text y="-18" text-anchor="middle" font-size="14" font-family="Inter, sans-serif" font-weight="700" fill="#C9D3E0">592</text></g><g transform="translate(640 380)"><circle r="14" fill="none" stroke="#E5484D" stroke-width="3"><animate attributeName="r" values="14;46" dur="1.8s" repeatCount="indefinite"></animate><animate attributeName="opacity" values=".9;0" dur="1.8s" repeatCount="indefinite"></animate></circle><rect x="-13" y="-13" width="26" height="26" rx="5" fill="#E5484D" stroke="#FFFFFF" stroke-width="2.5"></rect><rect x="-26" y="-44" width="52" height="22" rx="5" fill="#E5484D"></rect><text y="-28" text-anchor="middle" font-size="14" font-family="Inter, sans-serif" font-weight="700" fill="#FFFFFF">202</text></g></g></svg>
+<div class="shade" aria-hidden="true"></div>
+<div class="caps">
+<div class="cap" data-i="0"><p class="kick">Your whole fleet</p><h2>Every truck. One live board.</h2><p>Straight from your Samsara account, refreshed every 30 seconds.</p></div>
+<div class="cap" data-i="1"><p class="kick">Around the clock</p><h2>One of them won’t make it.</h2><p>LanePing checks every load against its appointment, even at 3 AM.</p></div>
+<div class="cap" data-i="2"><p class="kick">Hours ahead</p><h2>Dispatch knows first.</h2><p>The alert hits the board long before the broker picks up the phone.</p></div>
+</div>
+<div class="alert" role="presentation"><span class="dot"></span><div><b>202 is now late</b><span>Load #B-200 · will reach pickup 11h 36m late</span></div></div>
+</div>
+</section>
+
+<section id="say" aria-label="Know before the broker calls" style="background:#0E1A2B;color:#FFFFFF;height:180vh;position:relative">
+<div class="stick2"><p class="big"><span class="w">Know</span> <span class="w">before</span> <span class="w">the</span> <span class="w">broker</span> <span class="w">calls.</span></p></div>
+</section>
+
+<section id="features" style="padding: 96px 24px 40px">
+<div style="max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 40px">
+<div style="display: flex; flex-direction: column; gap: 12px; max-width: 760px">
+<h2 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 46px; line-height: 1.05">Built for the problems dispatch deals with every day</h2>
+<p style="margin: 0; font-size: 18px; line-height: 1.6; color: #4A5566">Each part of LanePing answers a question your dispatchers ask a dozen times a shift.</p>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px">
+
+<div class="fx rv" style="background: #FFFFFF; border: 1px solid #E3E1DA; border-radius: 14px; padding: 28px; display: flex; flex-direction: column; gap: 12px">
+<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C2361F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"></circle><path d="M12 9v4l2.5 2.5M9 2h6"></path></svg>
+<p style="margin: 0; font-size: 14px; font-weight: 600; color: #4A5566">“The broker called before we knew.”</p>
+<h3 style="margin: 0; font-size: 21px; line-height: 1.3">Late loads turn red hours ahead</h3>
+<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5566">Every load is checked against its appointment or time window around the clock, with the right time zone for each stop. At risk and late show before the appointment, not after.</p>
+</div>
+
+<div class="fx rv" style="background: #FFFFFF; border: 1px solid #E3E1DA; border-radius: 14px; padding: 28px; display: flex; flex-direction: column; gap: 12px">
+<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0E1A2B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"></path><circle cx="12" cy="10" r="2.5"></circle></svg>
+<p style="margin: 0; font-size: 14px; font-weight: 600; color: #4A5566">“How far is he from the pickup?”</p>
+<h3 style="margin: 0; font-size: 21px; line-height: 1.3">Miles and ETA to the next stop</h3>
+<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5566">Before a load is marked Loaded, the board tracks the truck to the shipper. Once it is loaded, it switches to each delivery in turn, recalculated as the truck moves.</p>
+</div>
+
+<div class="fx rv" style="background: #FFFFFF; border: 1px solid #E3E1DA; border-radius: 14px; padding: 28px; display: flex; flex-direction: column; gap: 12px">
+<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#6B7480" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8.8a15 15 0 0 1 20 0M5 12.5a10 10 0 0 1 14 0M8.5 16a5 5 0 0 1 7 0"></path><path d="M3 3l18 18"></path></svg>
+<p style="margin: 0; font-size: 14px; font-weight: 600; color: #4A5566">“The map says Illinois. He's in Ohio.”</p>
+<h3 style="margin: 0; font-size: 21px; line-height: 1.3">Bad GPS is never passed off as real</h3>
+<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5566">Trucks whose box stopped reporting turn gray instead of looking parked. If Samsara lists a unit number twice, loads stay on the one with live GPS automatically.</p>
+</div>
+
+<div class="fx rv" style="background: #FFFFFF; border: 1px solid #E3E1DA; border-radius: 14px; padding: 28px; display: flex; flex-direction: column; gap: 12px">
+<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1E7A46" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4.3-4.3"></path></svg>
+<p style="margin: 0; font-size: 14px; font-weight: 600; color: #4A5566">“Who's closest to this load?”</p>
+<h3 style="margin: 0; font-size: 21px; line-height: 1.3">Find the nearest empty truck</h3>
+<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5566">Type a pickup address and get your empty trucks ranked by road miles. The truck list is grouped by empty and loaded, sorted by unit number.</p>
+</div>
+
+<div class="fx rv" style="background: #FFFFFF; border: 1px solid #E3E1DA; border-radius: 14px; padding: 28px; display: flex; flex-direction: column; gap: 12px">
+<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0E1A2B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"></rect><path d="M9 8h6M9 12h6M9 16h3"></path></svg>
+<p style="margin: 0; font-size: 14px; font-weight: 600; color: #4A5566">“We never bill detention.”</p>
+<h3 style="margin: 0; font-size: 21px; line-height: 1.3">Detention with proof, and the invoice</h3>
+<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5566">Arrival and departure at every stop are logged from GPS. When free time runs out the clock starts, and a ready-to-send invoice is built for the broker.</p>
+</div>
+
+<div class="fx rv" style="background: #FFFFFF; border: 1px solid #E3E1DA; border-radius: 14px; padding: 28px; display: flex; flex-direction: column; gap: 12px">
+<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0E1A2B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"></path><path d="M14 3v5h5M12 18v-6M9 15l3 3 3-3"></path></svg>
+<p style="margin: 0; font-size: 14px; font-weight: 600; color: #4A5566">“Typing in rate cons takes forever.”</p>
+<h3 style="margin: 0; font-size: 21px; line-height: 1.3">Upload a rate con, the load fills itself</h3>
+<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5566">Drop in the PDF, a photo or the email chain. AI reads the stops, times, windows and broker, and fills the New Load form for your dispatcher to check.</p>
+</div>
+
+</div>
+</div>
+</section>
+
+<section style="padding: 56px 24px">
+<div style="max-width: 1200px; margin: 0 auto; background: #FFFFFF; border: 1px solid #E3E1DA; border-radius: 18px; padding: 40px; display: flex; flex-direction: column; gap: 28px">
+<h2 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 38px; line-height: 1.05">One load, start to finish</h2>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 20px; color: #8F6100">1 · Heading to pickup</span>
+<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5566">Empty truck, miles and ETA to the shipper. On time, at risk or late for pickup.</p>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 20px; color: #8F6100">2 · At the shipper</span>
+<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5566">Arrival is logged automatically. A popup and sound tell dispatch the truck is there.</p>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 20px; color: #8F6100">3 · Loaded and rolling</span>
+<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5566">Tick Loaded and tracking moves to the delivery, with alerts if the truck falls behind or stops while late.</p>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 20px; color: #8F6100">4 · Delivered</span>
+<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5566">Marked done on arrival. Any detention is on record with times, ready to bill.</p>
+</div>
+</div>
+</div>
+</section>
+
+<section id="how" style="padding: 56px 24px">
+<div style="max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 36px">
+<div style="display: flex; flex-direction: column; gap: 12px; max-width: 760px">
+<h2 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 46px; line-height: 1.05">We set it up. You start dispatching.</h2>
+<p style="margin: 0; font-size: 18px; line-height: 1.6; color: #4A5566">Your own private board, on your own login, with your trucks already on the map.</p>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px">
+<div class="fx rv" style="background: #0E1A2B; color: #FFFFFF; border-radius: 14px; padding: 28px; display: flex; flex-direction: column; gap: 10px">
+<span style="width: 44px; height: 44px; border-radius: 10px; background: #F2B21B; color: #0E1A2B; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 26px; display: flex; align-items: center; justify-content: center">1</span>
+<h3 style="margin: 0; font-size: 21px">Book a 15-minute demo</h3>
+<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #C9D3E0">See the board live and ask anything about how your dispatch team works.</p>
+</div>
+<div class="fx rv" style="background: #0E1A2B; color: #FFFFFF; border-radius: 14px; padding: 28px; display: flex; flex-direction: column; gap: 10px">
+<span style="width: 44px; height: 44px; border-radius: 10px; background: #F2B21B; color: #0E1A2B; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 26px; display: flex; align-items: center; justify-content: center">2</span>
+<h3 style="margin: 0; font-size: 21px">Send your Samsara API token</h3>
+<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #C9D3E0">Created in your Samsara settings in two minutes. Read-only access to truck locations.</p>
+</div>
+<div class="fx rv" style="background: #0E1A2B; color: #FFFFFF; border-radius: 14px; padding: 28px; display: flex; flex-direction: column; gap: 10px">
+<span style="width: 44px; height: 44px; border-radius: 10px; background: #F2B21B; color: #0E1A2B; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 26px; display: flex; align-items: center; justify-content: center">3</span>
+<h3 style="margin: 0; font-size: 21px">Your board goes live</h3>
+<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #C9D3E0">Usually within one business day. Your dispatchers log in from any browser.</p>
+</div>
+</div>
+</div>
+</section>
+
+<section id="pricing" style="padding: 56px 24px">
+<div style="max-width: 1200px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 32px; align-items: stretch">
+<div style="flex: 1 1 360px; min-width: 0; display: flex; flex-direction: column; gap: 14px; justify-content: center">
+<h2 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 46px; line-height: 1.05">Simple pricing</h2>
+<p style="margin: 0; font-size: 18px; line-height: 1.6; color: #4A5566">One setup fee, then a monthly price per truck. No hardware, no installs in the cab.</p>
+</div>
+<div style="flex: 1 1 460px; min-width: 0; background: #FFFFFF; border: 2px solid #0E1A2B; border-radius: 18px; padding: 36px; display: flex; flex-direction: column; gap: 18px">
+<div style="display: flex; flex-wrap: wrap; gap: 28px">
+<div style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 14px; font-weight: 600; color: rgb(74, 85, 102)">Setup, one time</span><span style="font-family: &quot;Barlow Condensed&quot;, sans-serif; font-weight: 700; font-size: 44px">$299</span></div>
+<div style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 14px; font-weight: 600; color: rgb(74, 85, 102)">Per truck, per month</span><span style="font-family: &quot;Barlow Condensed&quot;, sans-serif; font-weight: 700; font-size: 44px">$17.99</span></div>
+</div>
+<ul style="margin: 0; padding: 0 0 0 20px; display: flex; flex-direction: column; gap: 8px; font-size: 16px; line-height: 1.5">
+<li>Live map, late and on-time tracking for every load</li>
+<li>Alerts for late and stopped trucks, 24/7</li>
+<li>Detention logging and invoices</li>
+<li>AI rate con reading</li>
+<li>Your own private site and login</li>
+</ul>
+<a href="#demo" style="align-self: flex-start; background: #F2B21B; color: #0E1A2B; text-decoration: none; font-weight: 700; font-size: 17px; padding: 15px 24px; border-radius: 8px">Book a demo</a>
+</div>
+</div>
+</section>
+
+<section style="padding: 56px 24px">
+<div style="max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 28px">
+<h2 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 46px; line-height: 1.05">Questions</h2>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 28px 40px">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<h3 style="margin: 0; font-size: 19px">We already pay for Samsara. Why this?</h3>
+<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5566">Samsara shows where trucks are. LanePing checks every load against its appointment and tells dispatch who will be late, before it happens.</p>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<h3 style="margin: 0; font-size: 19px">Is our data private?</h3>
+<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5566">Every company gets its own separate site and login. Your trucks, loads and brokers are never shared with anyone.</p>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<h3 style="margin: 0; font-size: 19px">We're not on Samsara.</h3>
+<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5566">Tell us your ELD when you book a demo. Other providers can be connected; we'll confirm the timeline on the call.</p>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<h3 style="margin: 0; font-size: 19px">Do drivers need to do anything?</h3>
+<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5566">No. Everything comes from the ELD that is already in the truck. Nothing new for drivers to install or learn.</p>
+</div>
+</div>
+</div>
+</section>
+
+<section id="demo" style="background: #0E1A2B; color: #FFFFFF; padding: 88px 24px; border-radius: 0px">
+<div style="max-width: 1200px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 48px; align-items: flex-start">
+<div style="flex: 1 1 380px; min-width: 0; display: flex; flex-direction: column; gap: 16px">
+<h2 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 50px; line-height: 1.02">See your own fleet on the board</h2>
+<p style="margin: 0; font-size: 18px; line-height: 1.6; color: #C9D3E0">Fifteen minutes. We'll walk through a live board and answer how it fits your dispatch.</p>
+<p id="mailLine" style="margin: 0; font-size: 16px; color: #C9D3E0; font-weight: 400">Or email <a id="mailLink" href="#" style="color: #F2B21B"></a></p>
+</div>
+<form id="demoForm" novalidate style="flex: 1 1 480px; min-width: 0; background: #FFFFFF; color: #0E1A2B; border-radius: 16px; padding: 32px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px">
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 600">Your name<input type="text" name="name" required autocomplete="name" style="font: 16px Inter, sans-serif; padding: 12px; border: 1px solid #B9BFC8; border-radius: 8px"></label>
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 600">Company<input type="text" name="company" required autocomplete="organization" style="font: 16px Inter, sans-serif; padding: 12px; border: 1px solid #B9BFC8; border-radius: 8px"></label>
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 600">Work email<input type="email" name="email" required autocomplete="email" style="font: 16px Inter, sans-serif; padding: 12px; border: 1px solid #B9BFC8; border-radius: 8px"></label>
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 600">Phone<input type="tel" name="phone" autocomplete="tel" style="font: 16px Inter, sans-serif; padding: 12px; border: 1px solid #B9BFC8; border-radius: 8px"></label>
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 600">Number of trucks<input type="number" name="trucks" min="1" style="font: 16px Inter, sans-serif; padding: 12px; border: 1px solid #B9BFC8; border-radius: 8px"></label>
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 600">Your ELD<select name="eld" style="font: 16px Inter, sans-serif; padding: 12px; border: 1px solid #B9BFC8; border-radius: 8px; background: #FFFFFF"><option>Samsara</option><option>Motive</option><option>Geotab</option><option>Other</option></select></label>
+<button type="submit" style="grid-column: 1 / -1; background: #F2B21B; color: #0E1A2B; border: 0; font: 700 17px Inter, sans-serif; padding: 16px; border-radius: 8px; cursor: pointer">Request a demo</button>
+<p id="formMsg" role="status" style="grid-column: 1 / -1; margin: 0; min-height: 1.4em; font-weight: 600; font-size: 15px"></p>
+</form>
+</div>
+</section>
+
+<footer style="background: #0A1422; color: #9FB0C5; padding: 28px 24px">
+<div style="max-width: 1200px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; font-size: 14px">
+<span>© 2026 LanePing</span>
+</div>
+</footer>
+
+</div>
+<script>
+// ---- scroll-driven scenes (Apple-style) ----
+(function () {
+  const still = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v)), ease = t => t < .5 ? 2*t*t : 1 - Math.pow(-2*t + 2, 2) / 2;
+  const board = document.getElementById('board'), story = document.getElementById('story'), say = document.getElementById('say');
+  const world = document.getElementById('world'), caps = story.querySelectorAll('.cap'), words = say.querySelectorAll('.w');
+  const prog = el => { const r = el.getBoundingClientRect(), span = r.height - innerHeight; return span > 0 ? clamp(-r.top / span) : (r.top < innerHeight / 2 ? 1 : 0); };
+  function scene(p) {
+    // zoom from the whole map into truck 202 between 30% and 70%
+    const z = ease(clamp((p - .28) / .42)), s = 1 + 2.2 * z, narrow = innerWidth < 760, X = 640 + ((narrow ? 600 : 820) - 640) * z, Y = 380 + ((narrow ? 470 : 360) - 380) * z;
+    world.setAttribute('transform', 'translate(' + (X - 640 * s).toFixed(1) + ' ' + (Y - 380 * s).toFixed(1) + ') scale(' + s.toFixed(3) + ')');
+    const centres = [.12, .5, .86];
+    caps.forEach((c, i) => c.style.setProperty('--o', clamp(1 - Math.abs(p - centres[i]) / .2).toFixed(3)));
+    caps[0].style.setProperty('--o', p < .12 ? 1 : clamp(1 - (p - .12) / .2).toFixed(3));
+    caps[2].style.setProperty('--o', p > .86 ? 1 : clamp(1 - (.86 - p) / .2).toFixed(3));
+    story.querySelector('.alert').style.setProperty('--a', ease(clamp((p - .66) / .14)).toFixed(3));
+  }
+  if (still) { scene(1); words.forEach(w => w.style.setProperty('--l', 1)); return; }
+  let ticking = false;
+  function frame() {
+    ticking = false;
+    board.style.setProperty('--hp', ease(clamp(scrollY / (innerHeight * .6))).toFixed(3));   // tilted at the top, flat once you scroll
+    scene(prog(story));
+    const q = prog(say), n = words.length;
+    words.forEach((w, i) => w.style.setProperty('--l', clamp((q * 1.25 - i / n) * n).toFixed(3)));
+  }
+  addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(frame); } }, { passive: true });
+  addEventListener('resize', frame); frame();
+})();
+// ---- motion ----
+(function () {
+  const still = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches, map = document.getElementById('heroMap');
+  if (still) { if (map && map.pauseAnimations) map.pauseAnimations(); return; }
+  if (!('IntersectionObserver' in window)) return;
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.remove('pre'); io.unobserve(e.target); } }), { threshold: .15 });
+  document.querySelectorAll('.rv').forEach((el, i) => {
+    if (el.getBoundingClientRect().top < innerHeight) return;        // already on screen: leave as is
+    el.classList.add('pre'); el.style.transitionDelay = (i % 3) * 90 + 'ms'; io.observe(el);
+  });
+})();
+// ===== SETTINGS: fill these two in =====
+// 1) formEndpoint: your free Formspree link (see README). Demo requests then arrive in your email.
+// 2) email: your LanePing email address, shown on the page and used if the form can't send.
+const CONFIG = {
+  formEndpoint: '',          // e.g. 'https://formspree.io/f/abcdwxyz'
+  email: '',                 // e.g. 'hello@laneping.com'
+};
+// =======================================
+(function () {
+  const line = document.getElementById('mailLine'), link = document.getElementById('mailLink');
+  if (CONFIG.email) { link.textContent = CONFIG.email; link.href = 'mailto:' + CONFIG.email; } else line.hidden = true;
+  const f = document.getElementById('demoForm'), msg = document.getElementById('formMsg'), btn = f.querySelector('button[type=submit]');
+  const say = (t, ok) => { msg.textContent = t; msg.style.color = ok ? '#15803D' : '#B91C1C'; };
+  f.addEventListener('submit', async e => {
+    e.preventDefault();
+    const d = Object.fromEntries(new FormData(f));
+    if (!d.name || !d.company) return say('Please add your name and company.');
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.email || '')) return say('Please add a valid work email.');
+    if (CONFIG.formEndpoint) {
+      btn.disabled = true; say('Sending…', true);
+      try {
+        const r = await fetch(CONFIG.formEndpoint, { method: 'POST', headers: { Accept: 'application/json' }, body: new FormData(f) });
+        if (!r.ok) throw Error();
+        f.reset(); say('Thanks! We got your request and will get back to you soon to set up the demo.', true);
+      } catch (_) { say('Something went wrong sending the form. Please try again' + (CONFIG.email ? ' or email ' + CONFIG.email : '') + '.'); }
+      btn.disabled = false; return;
+    }
+    if (CONFIG.email) {
+      const body = Object.entries(d).map(([k, v]) => k + ': ' + v).join('\n');
+      location.href = 'mailto:' + CONFIG.email + '?subject=' + encodeURIComponent('LanePing demo request: ' + d.company) + '&body=' + encodeURIComponent(body);
+      return say('Your email app should open with the request ready to send.', true);
+    }
+    say('Demo requests are not switched on yet.');
+  });
+})();
+</script>
+</body>
+</html>
