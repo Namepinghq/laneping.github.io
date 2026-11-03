@@ -2,59 +2,70 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>LanePing · Live dispatch board for trucking fleets</title>
-<meta name="description" content="LanePing turns your Samsara GPS into one live dispatch board: every truck, every load, on time or late, around the clock. Set up for you in a day.">
-<meta property="og:title" content="LanePing · Know which trucks will be late before the broker calls">
-<meta property="og:description" content="Live dispatch board on top of your Samsara GPS. Late-load alerts, ETAs to pickup and delivery, detention proof, AI rate con reading.">
-<meta name="theme-color" content="#0E1A2B">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 34'%3E%3Crect x='1' y='1' width='32' height='32' rx='8' fill='%2316263D'/%3E%3Cpath d='M11 26 L15 8 M23 26 L19 8' stroke='white' stroke-width='2.4' stroke-linecap='round'/%3E%3Cpath d='M17 11 V14 M17 18 V21' stroke='%23F2B21B' stroke-width='2.6' stroke-linecap='round'/%3E%3C/svg%3E">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LanePing — TMS for trucking companies</title>
+<meta name="description" content="LanePing is a TMS for trucking companies: live dispatch tracking, AI rate con reading, billing and factoring, driver statements and driver files in one system.">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&amp;family=Inter:wght@400;500;600;700&amp;display=swap">
 <style>
 body{margin:0;background:#F6F5F1}
 a{color:#0E1A2B}a:hover{color:#16263D}
-</style>
-<style>
-html{scroll-behavior:smooth} section{scroll-margin-top:84px}
-header{position:sticky;top:0;z-index:50}
-@media (max-width:640px){header nav a:not([href="#demo"]){display:none}header nav{gap:12px}}
-#board{transform:perspective(1200px) rotateX(calc(18deg * (1 - var(--hp,0)))) rotateY(calc(-8deg * (1 - var(--hp,0)))) scale(calc(.92 + .1 * var(--hp,0)));transform-origin:50% 0;will-change:transform}
-#story .stick{position:sticky;top:0;height:100vh;overflow:hidden}
-#story .shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(15,30,49,.92) 0%,rgba(15,30,49,.55) 38%,rgba(15,30,49,0) 62%);pointer-events:none}
-#story .caps{position:absolute;left:max(24px,6vw);top:50%;transform:translateY(-50%);width:min(520px,calc(100% - 48px))}
-#story .cap{position:absolute;left:0;top:50%;transform:translateY(calc(-50% + (1 - var(--o,0)) * 28px));opacity:var(--o,0);transition:none}
-#story .cap .kick{margin:0 0 10px;color:#F2B21B;font:600 14px Inter,sans-serif;letter-spacing:1.5px;text-transform:uppercase}
-#story .cap h2{margin:0 0 14px;font:700 clamp(38px,6vw,72px)/1.02 "Barlow Condensed",sans-serif}
-#story .cap p:last-child{margin:0;color:#C9D3E0;font:400 clamp(16px,1.6vw,20px)/1.5 Inter,sans-serif}
-#story .alert{position:absolute;right:max(16px,5vw);bottom:max(28px,8vh);display:flex;gap:12px;align-items:center;background:#FFFFFF;color:#0E1A2B;border-radius:14px;padding:14px 18px;box-shadow:0 20px 50px rgba(0,0,0,.45);border-left:0;opacity:var(--a,0);transform:translateY(calc((1 - var(--a,0)) * 40px)) scale(calc(.94 + .06 * var(--a,0)));max-width:calc(100% - 32px)}
-#story .alert b{display:block;font:700 17px Inter,sans-serif;color:#B42318}
-#story .alert span{font:500 14px Inter,sans-serif;color:#4A5566}
-#story .alert .dot{width:12px;height:12px;border-radius:50%;background:#E5484D;flex:0 0 auto;box-shadow:0 0 0 6px rgba(229,72,77,.18)}
-#say .stick2{position:sticky;top:0;height:100vh;display:flex;align-items:center;justify-content:center;padding:0 24px}
-#say .big{margin:0;max-width:1100px;text-align:center;font:700 clamp(48px,9vw,128px)/1 "Barlow Condensed",sans-serif;letter-spacing:.5px}
-#say .w{opacity:calc(.16 + .84 * var(--l,0));display:inline-block;transform:translateY(calc((1 - var(--l,0)) * 10px));color:#FFFFFF}
-#say .w:last-child,#say .w:nth-last-child(2){color:#F2B21B}
-@media (max-width:760px){#story .shade{background:linear-gradient(180deg,rgba(15,30,49,.95) 0%,rgba(15,30,49,.8) 30%,rgba(15,30,49,0) 46%)}#story .caps{top:22%;transform:none}#story .cap{top:0;transform:translateY(calc((1 - var(--o,0)) * 24px))}}
-@media (prefers-reduced-motion:reduce){#board{transform:none}#story,#say{height:auto!important}#story .stick{position:relative;height:100vh}#say .stick2{position:relative;height:70vh}}
-a[href="#demo"],button[type=submit]{transition:transform .15s ease,filter .15s ease,box-shadow .15s ease}
-a[href="#demo"]:hover,button[type=submit]:hover{transform:translateY(-2px);filter:brightness(1.06);box-shadow:0 8px 20px rgba(242,178,27,.35)}
-.fx{transition:transform .25s ease,box-shadow .25s ease}
-.fx:hover{transform:translateY(-5px);box-shadow:0 14px 32px rgba(14,26,43,.14)}
-.rv{transition:transform .7s cubic-bezier(.2,.7,.2,1),opacity .7s ease,box-shadow .25s ease}
-.rv.pre{transform:translateY(26px);opacity:.25}
-@keyframes rise{from{transform:translateY(14px);opacity:.3}to{transform:none;opacity:1}}
-@keyframes glow{0%,100%{box-shadow:0 0 0 0 rgba(194,54,31,.55)}50%{box-shadow:0 0 0 6px rgba(194,54,31,0)}}
-@media (prefers-reduced-motion:no-preference){
-  #top h1{animation:rise .8s cubic-bezier(.2,.7,.2,1) both}
-  #top h1+p{animation:rise .8s .12s cubic-bezier(.2,.7,.2,1) both}
-  #heroMap{animation:rise .9s .2s cubic-bezier(.2,.7,.2,1) both}
-  .latechip{animation:glow 1.8s ease-in-out infinite}
+@keyframes lpFadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+@keyframes lpPulse{0%{transform:scale(1);opacity:.7}100%{transform:scale(3);opacity:0}}
+@keyframes lpMarquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes lpBlink{0%,100%{opacity:1}50%{opacity:.25}}
+@keyframes lpFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes lpTravel{0%{left:0%}100%{left:100%}}
+@keyframes lpGlow{0%,100%{box-shadow:0 0 0 0 rgba(242,178,27,.55)}50%{box-shadow:0 0 0 12px rgba(242,178,27,0)}}
+@keyframes lpType{0%,10%{width:0}60%,100%{width:100%}}
+.lp-up{animation:lpFadeUp .9s cubic-bezier(.2,.7,.2,1) both}
+.lp-d1{animation-delay:.12s}.lp-d2{animation-delay:.24s}.lp-d3{animation-delay:.36s}.lp-d4{animation-delay:.5s}
+.lp-float{animation:lpFloat 5s ease-in-out infinite}
+.lp-blink{animation:lpBlink 1.4s ease-in-out infinite}
+.lp-pulse{transform-box:fill-box;transform-origin:center;animation:lpPulse 1.6s ease-out infinite}
+.lp-glow{animation:lpGlow 2.2s ease-in-out infinite}
+.lp-marquee{display:flex;width:max-content;animation:lpMarquee 45s linear infinite}
+.lp-marquee:hover{animation-play-state:paused}
+.lp-travel{position:absolute;top:50%;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;animation:lpTravel 6s linear infinite}
+.lp-type{display:inline-block;overflow:hidden;white-space:nowrap;vertical-align:bottom;animation:lpType 4s steps(28) infinite}
+.lp-card{transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease}
+.lp-card:hover{transform:translateY(-6px);box-shadow:0 20px 44px rgba(14,26,43,.14);border-color:#0E1A2B}
+.lp-btn{transition:transform .2s ease,filter .2s ease}
+.lp-btn:hover{transform:translateY(-2px);filter:brightness(1.06)}
+@supports (animation-timeline: view()){
+.lp-reveal{animation:lpFadeUp linear both;animation-timeline:view();animation-range:entry 0% cover 28%}
 }
-@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.rv,.fx,a[href="#demo"],button[type=submit]{transition:none}} input:focus,select:focus{outline:2px solid #1D4ED8;outline-offset:1px} button:disabled{opacity:.6;cursor:wait}</style>
+@keyframes lpToast{0%,4%{opacity:0;transform:translateY(14px) scale(.96)}10%,30%{opacity:1;transform:none}36%,100%{opacity:0;transform:translateY(-10px) scale(.98)}}
+@keyframes lpScan{0%{top:6%}50%{top:88%}100%{top:6%}}
+@keyframes lpFieldIn{0%,8%{opacity:0;transform:translateX(-12px)}16%,82%{opacity:1;transform:none}92%,100%{opacity:0;transform:none}}
+@keyframes lpCheck{0%,40%{transform:scale(0)}50%{transform:scale(1.25)}56%,90%{transform:scale(1)}100%{transform:scale(0)}}
+@keyframes lpShine{0%{left:-60%}55%,100%{left:130%}}
+@keyframes lpWiggle{0%,100%{transform:rotate(0)}25%{transform:rotate(-12deg) scale(1.12)}60%{transform:rotate(9deg) scale(1.12)}}
+@keyframes lpBar{0%{transform:scaleX(0)}100%{transform:scaleX(1)}}
+@keyframes lpSpin{to{transform:rotate(360deg)}}
+.lp-toast{opacity:0;animation:lpToast 9s ease-in-out infinite}
+.lp-t2{animation-delay:3s}.lp-t3{animation-delay:6s}
+.lp-scan{position:absolute;left:6%;right:6%;height:3px;border-radius:3px;animation:lpScan 3.2s ease-in-out infinite}
+.lp-field{opacity:0;animation:lpFieldIn 7s ease infinite}
+.lp-f2{animation-delay:.6s}.lp-f3{animation-delay:1.2s}.lp-f4{animation-delay:1.8s}.lp-f5{animation-delay:2.4s}
+.lp-check{display:inline-flex;transform:scale(0);animation:lpCheck 7s ease infinite;animation-delay:2.8s}
+.lp-btn{position:relative;overflow:hidden}
+.lp-btn::after{content:"";position:absolute;top:0;bottom:0;width:40%;left:-60%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.45),transparent);animation:lpShine 3.5s ease-in-out infinite;pointer-events:none}
+.lp-card:hover svg{animation:lpWiggle .6s ease}
+.lp-bar{display:block;height:4px;border-radius:4px;transform-origin:left;animation:lpBar 1.4s cubic-bezier(.2,.7,.2,1) both}
+.lp-spin{animation:lpSpin 1.2s linear infinite}
+@supports (animation-timeline: view()){
+.lp-bar{animation-timeline:view();animation-range:entry 10% cover 40%}
+}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+input[type=range]{accent-color:#0E1A2B}
+</style>
+
 </head>
 <body>
+
 <div style="font-family: Inter, system-ui, sans-serif; color: #0E1A2B; background: #F6F5F1; min-height: 100vh">
 
 <header style="background: #0E1A2B; border-bottom: 1px solid #24384F">
@@ -62,11 +73,14 @@ a[href="#demo"]:hover,button[type=submit]:hover{transform:translateY(-2px);filte
 <a href="#top" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: #FFFFFF">
 <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><rect x="1" y="1" width="32" height="32" rx="8" fill="#16263D" stroke="#3A5170"></rect><path d="M11 26 L15 8 M23 26 L19 8" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"></path><path d="M17 11 V14 M17 18 V21" stroke="#F2B21B" stroke-width="2.4" stroke-linecap="round"></path></svg>
 <span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: 0.5px">LanePing</span>
+<span style="font-size: 12px; font-weight: 700; letter-spacing: 1px; color: #0E1A2B; background: #F2B21B; border-radius: 4px; padding: 3px 6px">TMS</span>
 </a>
 <nav aria-label="Main" style="display: flex; flex-wrap: wrap; align-items: center; gap: 24px; font-size: 15px; font-weight: 500">
-<a href="#features" style="color: #D5DDE8; text-decoration: none">Features</a>
-<a href="#how" style="color: #D5DDE8; text-decoration: none">How it works</a>
+<a href="#modules" style="color: #D5DDE8; text-decoration: none">Modules</a>
+<a href="#teams" style="color: #D5DDE8; text-decoration: none">Teams</a>
+<a href="#how" style="color: #D5DDE8; text-decoration: none">Getting started</a>
 <a href="#pricing" style="color: #D5DDE8; text-decoration: none">Pricing</a>
+<a href="#support" style="color: #D5DDE8; text-decoration: none">Support</a>
 <a href="#demo" style="background: #F2B21B; color: #0E1A2B; text-decoration: none; font-weight: 700; padding: 12px 18px; border-radius: 8px; min-height: 20px">Book a demo</a>
 </nav>
 </div>
@@ -75,150 +89,268 @@ a[href="#demo"]:hover,button[type=submit]:hover{transform:translateY(-2px);filte
 <section id="top" style="background: #0E1A2B; color: #FFFFFF">
 <div style="max-width: 1200px; margin: 0 auto; padding: 72px 24px 88px; display: flex; flex-wrap: wrap; gap: 56px; align-items: center">
 <div style="flex: 1 1 440px; min-width: 0; display: flex; flex-direction: column; gap: 24px">
-<p style="margin: 0; font-size: 14px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: #F2B21B">Live dispatch board for trucking fleets</p>
-<h1 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 64px; line-height: 1.02; letter-spacing: 0.2px">Know which trucks will be late before the broker calls.</h1>
-<p style="margin: 0; font-size: 19px; line-height: 1.55; color: #C9D3E0; max-width: 560px">LanePing turns your Samsara GPS into one live board: every truck, every load, on time or late, around the clock. We set it up for you. No new hardware, nothing to install.</p>
-<div style="display: flex; flex-wrap: wrap; gap: 12px; padding-top: 8px">
-<a href="#demo" style="background: #F2B21B; color: #0E1A2B; text-decoration: none; font-weight: 700; font-size: 17px; padding: 15px 24px; border-radius: 8px">Book a 15-minute demo</a>
-<a href="#how" style="color: #FFFFFF; text-decoration: none; font-weight: 600; font-size: 17px; padding: 14px 22px; border-radius: 8px; border: 1px solid #3A5170">See how it works</a>
+<p class="lp-up" style="margin: 0; font-size: 14px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: #F2B21B; display: flex; align-items: center; gap: 10px"><span class="lp-blink" style="width: 9px; height: 9px; border-radius: 50%; background: #22C55E"></span>TMS for trucking companies</p>
+<h1 class="lp-up lp-d1" style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 68px; line-height: 1.02; letter-spacing: 0.2px">Dispatch, billing, fleet and driver pay. <span style="color: #F2B21B">One system.</span></h1>
+<p class="lp-up lp-d2" style="margin: 0; font-size: 19px; line-height: 1.55; color: #C9D3E0; max-width: 560px">LanePing runs the whole load: rate con in, truck tracked live, invoice and factoring packet out, driver statement settled. Every team gets its own login and sees only its own work.</p>
+<div class="lp-up lp-d3" style="display: flex; flex-wrap: wrap; gap: 12px; padding-top: 8px">
+<a href="#demo" class="lp-btn lp-glow" style="background: #F2B21B; color: #0E1A2B; text-decoration: none; font-weight: 700; font-size: 17px; padding: 15px 24px; border-radius: 8px">Book a 20-minute demo</a>
+<a href="#pricing" class="lp-btn" style="color: #FFFFFF; text-decoration: none; font-weight: 600; font-size: 17px; padding: 14px 22px; border-radius: 8px; border: 1px solid #3A5170">See pricing · from $10/truck</a>
 </div>
-<p style="margin: 0; font-size: 14px; color: #9FB0C5">Works with Samsara today. More ELDs on request.</p>
+<div class="lp-up lp-d4" style="display: flex; flex-wrap: wrap; gap: 10px 22px; font-size: 14px; color: #C9D3E0; font-weight: 500">
+<span style="display: flex; align-items: center; gap: 8px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"></path></svg>No hardware</span>
+<span style="display: flex; align-items: center; gap: 8px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"></path></svg>Set up for you</span>
+<span style="display: flex; align-items: center; gap: 8px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"></path></svg>Samsara + Synergy ELD</span>
+</div>
 </div>
 
-<div id="board" style="flex: 1 1 520px; min-width: 0; background: #16263D; border: 1px solid #24384F; border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 12px">
-<div style="display: flex; flex-wrap: wrap; gap: 8px; font-size: 13px; font-weight: 600">
-<span style="background: #FFFFFF; color: #0E1A2B; border-radius: 999px; padding: 6px 12px">Late <b style="color: #C2361F">1</b></span>
-<span style="background: #FFFFFF; color: #0E1A2B; border-radius: 999px; padding: 6px 12px">At risk <b style="color: #8F6100">1</b></span>
-<span style="background: #FFFFFF; color: #0E1A2B; border-radius: 999px; padding: 6px 12px">On time <b style="color: #1E7A46">2</b></span>
-<span style="background: #FFFFFF; color: #0E1A2B; border-radius: 999px; padding: 6px 12px">Empty trucks <b>5</b></span>
+<div class="lp-up lp-d2" style="flex: 1 1 520px; min-width: 0; background: #16263D; border: 1px solid #24384F; border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 30px 80px rgba(0,0,0,.35)">
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 13px; font-weight: 600">
+<span style="background: #F2B21B; color: #0E1A2B; border-radius: 6px; padding: 7px 12px">Dispatch</span>
+<span style="background: #24384F; color: #D5DDE8; border-radius: 6px; padding: 7px 12px">Billing</span>
+<span style="background: #24384F; color: #D5DDE8; border-radius: 6px; padding: 7px 12px">Fleet</span>
+<span style="background: #24384F; color: #D5DDE8; border-radius: 6px; padding: 7px 12px">Accounting</span>
+<span style="background: #24384F; color: #D5DDE8; border-radius: 6px; padding: 7px 12px">Drivers</span>
+<span style="margin-left: auto; display: flex; align-items: center; gap: 6px; color: #9FE3B5; font-size: 12px; letter-spacing: 1px"><span class="lp-blink" style="width: 8px; height: 8px; border-radius: 50%; background: #22C55E"></span>LIVE</span>
 </div>
-<svg id="heroMap" viewBox="0 0 560 250" style="width: 100%; height: auto; display: block; border-radius: 10px; background: #E9EDF1" role="img" aria-label="Map preview: trucks on their routes, one late truck shown in red">
+<svg viewBox="0 0 560 220" style="width: 100%; height: auto; display: block; border-radius: 10px; background: #E9EDF1" role="img" aria-label="Map preview: trucks on their routes, one late truck shown in red">
 <path d="M0 60 C120 40 200 90 300 70 S480 30 560 55" stroke="#FFFFFF" stroke-width="7" fill="none"></path>
-<path d="M40 250 C90 180 140 150 220 140 S380 120 430 0" stroke="#FFFFFF" stroke-width="7" fill="none"></path>
-<path d="M0 190 C140 200 260 170 340 190 S480 220 560 200" stroke="#FFFFFF" stroke-width="7" fill="none"></path>
-<path d="M120 0 C130 80 180 160 170 250" stroke="#FFFFFF" stroke-width="5" fill="none"></path>
-<path d="M220 140 C300 132 360 125 395 80" stroke="#C2361F" stroke-width="4" stroke-dasharray="8 6" fill="none"><animate attributeName="stroke-dashoffset" from="0" to="-28" dur="1.2s" repeatCount="indefinite"></animate></path>
+<path d="M40 220 C90 160 140 140 220 130 S380 110 430 0" stroke="#FFFFFF" stroke-width="7" fill="none"></path>
+<path d="M0 175 C140 185 260 155 340 175 S480 200 560 185" stroke="#FFFFFF" stroke-width="7" fill="none"></path>
+<path d="M220 130 C300 122 360 115 395 80" stroke="#C2361F" stroke-width="4" stroke-dasharray="8 6" fill="none"></path>
 <rect x="388" y="68" width="18" height="18" rx="3" fill="#0E1A2B"></rect>
 <text x="397" y="81" font-size="11" font-family="Inter, sans-serif" font-weight="700" fill="#FFFFFF" text-anchor="middle">P</text>
-<circle cx="220" cy="140" r="12" fill="none" stroke="#C2361F" stroke-width="3"><animate attributeName="r" values="12;30" dur="1.8s" repeatCount="indefinite"></animate><animate attributeName="opacity" values=".8;0" dur="1.8s" repeatCount="indefinite"></animate></circle>
-<rect x="209" y="129" width="22" height="22" rx="4" fill="#C2361F" stroke="#FFFFFF" stroke-width="2"></rect>
-<rect x="196" y="102" width="48" height="20" rx="4" fill="#C2361F"></rect>
-<text x="220" y="116" font-size="12" font-family="Inter, sans-serif" font-weight="700" fill="#FFFFFF" text-anchor="middle">202</text>
-<g class="truck"><circle cx="0" cy="0" r="9" fill="#22C55E" stroke="#1D4ED8" stroke-width="2.5"></circle><text x="0" y="-18" font-size="12" font-family="Inter, sans-serif" font-weight="700" fill="#0E1A2B" text-anchor="middle">101</text><animateMotion dur="22s" begin="-11.5s" repeatCount="indefinite" path="M0 60 C120 40 200 90 300 70 S480 30 560 55"></animateMotion></g>
-<g class="truck"><circle cx="0" cy="0" r="9" fill="#22C55E" stroke="#1D4ED8" stroke-width="2.5"></circle><text x="0" y="-18" font-size="12" font-family="Inter, sans-serif" font-weight="700" fill="#0E1A2B" text-anchor="middle">303</text><animateMotion dur="28s" begin="-17s" repeatCount="indefinite" path="M0 190 C140 200 260 170 340 190 S480 220 560 200"></animateMotion></g>
-<rect x="470" y="40" width="16" height="16" rx="3" fill="#A3ABB6"></rect>
-<text x="478" y="30" font-size="12" font-family="Inter, sans-serif" font-weight="700" fill="#5B6677" text-anchor="middle">777</text>
-<rect x="80" y="188" width="16" height="16" rx="3" fill="#0E1A2B"></rect>
-<text x="88" y="178" font-size="12" font-family="Inter, sans-serif" font-weight="700" fill="#0E1A2B" text-anchor="middle">592</text>
+<circle class="lp-pulse" cx="220" cy="130" r="12" fill="#C2361F"></circle>
+<rect x="209" y="119" width="22" height="22" rx="4" fill="#C2361F" stroke="#FFFFFF" stroke-width="2"></rect>
+<rect x="196" y="92" width="48" height="20" rx="4" fill="#C2361F"></rect>
+<text x="220" y="106" font-size="12" font-family="Inter, sans-serif" font-weight="700" fill="#FFFFFF" text-anchor="middle">202</text>
+<g>
+<circle cx="0" cy="0" r="9" fill="#22C55E" stroke="#1D4ED8" stroke-width="2.5"></circle>
+<text x="0" y="-16" font-size="12" font-family="Inter, sans-serif" font-weight="700" fill="#0E1A2B" text-anchor="middle">101</text>
+<animateMotion dur="16s" repeatCount="indefinite" path="M0 60 C120 40 200 90 300 70 S480 30 560 55"></animateMotion>
+</g>
+<g>
+<circle cx="0" cy="0" r="9" fill="#22C55E" stroke="#1D4ED8" stroke-width="2.5"></circle>
+<text x="0" y="-16" font-size="12" font-family="Inter, sans-serif" font-weight="700" fill="#0E1A2B" text-anchor="middle">303</text>
+<animateMotion dur="20s" begin="-7s" repeatCount="indefinite" path="M560 185 C480 200 420 190 340 175 S140 185 0 175"></animateMotion>
+</g>
+<g>
+<circle cx="0" cy="0" r="8" fill="#22C55E" stroke="#1D4ED8" stroke-width="2.5"></circle>
+<text x="0" y="-15" font-size="12" font-family="Inter, sans-serif" font-weight="700" fill="#0E1A2B" text-anchor="middle">418</text>
+<animateMotion dur="18s" begin="-4s" repeatCount="indefinite" path="M430 0 C380 110 300 122 220 130 S90 160 40 220"></animateMotion>
+</g>
+<rect x="80" y="173" width="16" height="16" rx="3" fill="#0E1A2B"></rect>
+<text x="88" y="163" font-size="12" font-family="Inter, sans-serif" font-weight="700" fill="#0E1A2B" text-anchor="middle">592</text>
 </svg>
-<div style="background: #FFF6F4; border-radius: 10px; border-left: 0; padding: 14px 16px; display: flex; flex-direction: column; gap: 6px">
-<div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap">
-<span style="font-weight: 700; font-size: 16px; color: #0E1A2B">202 <span style="font-weight: 500; font-size: 13px; color: #4A5566">Load #B-200</span></span>
-<span class="latechip" style="background: #C2361F; color: #FFFFFF; font-size: 12px; font-weight: 700; border-radius: 999px; padding: 4px 10px">Late for pickup</span>
-</div>
-<div style="font-size: 14px; color: #0E1A2B; display: flex; flex-wrap: wrap; gap: 4px 14px"><b>To pickup</b><span>700 mi</span><span>ETA 5:23 PM</span><b style="color: #C2361F">Will arrive 11h 36m late</b></div>
-</div>
-<div style="background: #FFFFFF; border-radius: 10px; padding: 14px 16px; display: flex; flex-direction: column; gap: 6px">
+<div style="background: #FFFFFF; border-radius: 10px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px">
 <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap">
 <span style="font-weight: 700; font-size: 16px; color: #0E1A2B">303 <span style="font-weight: 500; font-size: 13px; color: #4A5566">Load #C-300</span></span>
 <span style="background: #1E7A46; color: #FFFFFF; font-size: 12px; font-weight: 700; border-radius: 999px; padding: 4px 10px">On time</span>
 </div>
-<div style="font-size: 14px; color: #0E1A2B; display: flex; flex-wrap: wrap; gap: 4px 14px"><b>To next delivery</b><span>611 mi</span><span>ETA 3:52 PM</span><b style="color: #1E7A46">1h 16m to spare</b></div>
+<div style="display: flex; flex-wrap: wrap; gap: 6px; font-size: 12px; font-weight: 600">
+<span style="background: #E8F3EC; color: #1E5B37; border-radius: 6px; padding: 5px 9px">Rate con ✓</span>
+<span style="background: #E8F3EC; color: #1E5B37; border-radius: 6px; padding: 5px 9px">BOL ✓</span>
+<span style="background: #FDF3DC; color: #7A5200; border-radius: 6px; padding: 5px 9px">POD pending</span>
+<span style="background: #EEF1F5; color: #3A4657; border-radius: 6px; padding: 5px 9px">Invoice: factoring</span>
+</div>
+</div>
+<div aria-hidden="true" style="position: relative; height: 58px">
+<div class="lp-toast" style="position: absolute; inset: 0; background: #0E1A2B; border: 1px solid #C2361F; border-radius: 10px; padding: 10px 14px; display: flex; align-items: center; gap: 12px; color: #FFFFFF; font-size: 14px; font-weight: 600">
+<span style="width: 30px; height: 30px; flex: none; border-radius: 8px; background: #C2361F; display: flex; align-items: center; justify-content: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round"><path d="M12 8v5M12 17h.01"></path><circle cx="12" cy="12" r="9"></circle></svg></span>
+<span>Truck 202 will be 2h 10m late to pickup</span>
+</div>
+<div class="lp-toast lp-t2" style="position: absolute; inset: 0; background: #0E1A2B; border: 1px solid #22C55E; border-radius: 10px; padding: 10px 14px; display: flex; align-items: center; gap: 12px; color: #FFFFFF; font-size: 14px; font-weight: 600">
+<span style="width: 30px; height: 30px; flex: none; border-radius: 8px; background: #1E7A46; display: flex; align-items: center; justify-content: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"></path></svg></span>
+<span>Truck 101 arrived at delivery</span>
+</div>
+<div class="lp-toast lp-t3" style="position: absolute; inset: 0; background: #0E1A2B; border: 1px solid #F2B21B; border-radius: 10px; padding: 10px 14px; display: flex; align-items: center; gap: 12px; color: #FFFFFF; font-size: 14px; font-weight: 600">
+<span style="width: 30px; height: 30px; flex: none; border-radius: 8px; background: #F2B21B; display: flex; align-items: center; justify-content: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0E1A2B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"></path><path d="M14 3v5h5"></path></svg></span>
+<span>Invoice sent to factoring with BOL + POD</span>
+</div>
 </div>
 </div>
 </div>
 </section>
 
-<section id="story" aria-label="How LanePing catches a late load" style="position:relative;height:320vh;background:#0F1E31;color:#FFFFFF">
-<div class="stick">
-<svg id="world-svg" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="position:absolute;inset:0;width:100%;height:100%"><rect width="1200" height="700" fill="#0F1E31"></rect><g id="world"><path d="M-40 120 C220 80 420 170 640 130 S1000 60 1240 110" stroke="#22374F" stroke-width="16" fill="none" stroke-linecap="round"></path><path d="M-40 120 C220 80 420 170 640 130 S1000 60 1240 110" stroke="#2E4766" stroke-width="2" fill="none" stroke-dasharray="10 14"></path><path d="M-40 560 C260 600 520 520 720 560 S1000 640 1240 590" stroke="#22374F" stroke-width="16" fill="none" stroke-linecap="round"></path><path d="M-40 560 C260 600 520 520 720 560 S1000 640 1240 590" stroke="#2E4766" stroke-width="2" fill="none" stroke-dasharray="10 14"></path><path d="M180 -40 C220 160 300 330 280 740" stroke="#22374F" stroke-width="16" fill="none" stroke-linecap="round"></path><path d="M180 -40 C220 160 300 330 280 740" stroke="#2E4766" stroke-width="2" fill="none" stroke-dasharray="10 14"></path><path d="M1020 -40 C990 200 1060 420 1000 740" stroke="#22374F" stroke-width="16" fill="none" stroke-linecap="round"></path><path d="M1020 -40 C990 200 1060 420 1000 740" stroke="#2E4766" stroke-width="2" fill="none" stroke-dasharray="10 14"></path><path d="M-40 330 C200 300 420 360 640 380 S980 420 1240 360" stroke="#22374F" stroke-width="16" fill="none" stroke-linecap="round"></path><path d="M-40 330 C200 300 420 360 640 380 S980 420 1240 360" stroke="#2E4766" stroke-width="2" fill="none" stroke-dasharray="10 14"></path><path d="M520 740 C560 600 600 480 640 380 S760 160 820 -40" stroke="#22374F" stroke-width="16" fill="none" stroke-linecap="round"></path><path d="M520 740 C560 600 600 480 640 380 S760 160 820 -40" stroke="#2E4766" stroke-width="2" fill="none" stroke-dasharray="10 14"></path><path d="M640 380 C720 330 820 280 900 230" stroke="#E5484D" stroke-width="5" stroke-dasharray="10 8" fill="none"><animate attributeName="stroke-dashoffset" from="0" to="-36" dur="1.3s" repeatCount="indefinite"></animate></path><g transform="translate(900 230)"><rect x="-14" y="-14" width="28" height="28" rx="6" fill="#F2B21B"></rect><text y="6" text-anchor="middle" font-size="16" font-family="Inter, sans-serif" font-weight="700" fill="#0E1A2B">P</text></g><g><circle r="10" fill="#22C55E" stroke="#0F1E31" stroke-width="3"></circle><text y="-18" text-anchor="middle" font-size="14" font-family="Inter, sans-serif" font-weight="700" fill="#C9D3E0">114</text><animateMotion dur="26s" begin="-3s" repeatCount="indefinite" path="M-40 120 C220 80 420 170 640 130 S1000 60 1240 110"></animateMotion></g><g><circle r="10" fill="#22C55E" stroke="#0F1E31" stroke-width="3"></circle><text y="-18" text-anchor="middle" font-size="14" font-family="Inter, sans-serif" font-weight="700" fill="#C9D3E0">227</text><animateMotion dur="26s" begin="-16s" repeatCount="indefinite" path="M-40 120 C220 80 420 170 640 130 S1000 60 1240 110"></animateMotion></g><g><circle r="10" fill="#22C55E" stroke="#0F1E31" stroke-width="3"></circle><text y="-18" text-anchor="middle" font-size="14" font-family="Inter, sans-serif" font-weight="700" fill="#C9D3E0">305</text><animateMotion dur="32s" begin="-10s" repeatCount="indefinite" path="M-40 560 C260 600 520 520 720 560 S1000 640 1240 590"></animateMotion></g><g><circle r="10" fill="#22C55E" stroke="#0F1E31" stroke-width="3"></circle><text y="-18" text-anchor="middle" font-size="14" font-family="Inter, sans-serif" font-weight="700" fill="#C9D3E0">418</text><animateMotion dur="32s" begin="-25s" repeatCount="indefinite" path="M-40 560 C260 600 520 520 720 560 S1000 640 1240 590"></animateMotion></g><g><circle r="10" fill="#22C55E" stroke="#0F1E31" stroke-width="3"></circle><text y="-18" text-anchor="middle" font-size="14" font-family="Inter, sans-serif" font-weight="700" fill="#C9D3E0">533</text><animateMotion dur="24s" begin="-6s" repeatCount="indefinite" path="M180 -40 C220 160 300 330 280 740"></animateMotion></g><g><circle r="10" fill="#22C55E" stroke="#0F1E31" stroke-width="3"></circle><text y="-18" text-anchor="middle" font-size="14" font-family="Inter, sans-serif" font-weight="700" fill="#C9D3E0">612</text><animateMotion dur="30s" begin="-19s" repeatCount="indefinite" path="M1020 -40 C990 200 1060 420 1000 740"></animateMotion></g><g><circle r="10" fill="#22C55E" stroke="#0F1E31" stroke-width="3"></circle><text y="-18" text-anchor="middle" font-size="14" font-family="Inter, sans-serif" font-weight="700" fill="#C9D3E0">749</text><animateMotion dur="28s" begin="-21s" repeatCount="indefinite" path="M-40 330 C200 300 420 360 640 380 S980 420 1240 360"></animateMotion></g><g transform="translate(1080 470)"><rect x="-10" y="-10" width="20" height="20" rx="4" fill="#5B6677"></rect><text y="-18" text-anchor="middle" font-size="14" font-family="Inter, sans-serif" font-weight="700" fill="#7F8B9C">861</text></g><g transform="translate(90 440)"><rect x="-10" y="-10" width="20" height="20" rx="4" fill="#0B1625" stroke="#3A5170" stroke-width="2"></rect><text y="-18" text-anchor="middle" font-size="14" font-family="Inter, sans-serif" font-weight="700" fill="#C9D3E0">592</text></g><g transform="translate(640 380)"><circle r="14" fill="none" stroke="#E5484D" stroke-width="3"><animate attributeName="r" values="14;46" dur="1.8s" repeatCount="indefinite"></animate><animate attributeName="opacity" values=".9;0" dur="1.8s" repeatCount="indefinite"></animate></circle><rect x="-13" y="-13" width="26" height="26" rx="5" fill="#E5484D" stroke="#FFFFFF" stroke-width="2.5"></rect><rect x="-26" y="-44" width="52" height="22" rx="5" fill="#E5484D"></rect><text y="-28" text-anchor="middle" font-size="14" font-family="Inter, sans-serif" font-weight="700" fill="#FFFFFF">202</text></g></g></svg>
-<div class="shade" aria-hidden="true"></div>
-<div class="caps">
-<div class="cap" data-i="0"><p class="kick">Your whole fleet</p><h2>Every truck. One live board.</h2><p>Straight from your Samsara account, refreshed every 30 seconds.</p></div>
-<div class="cap" data-i="1"><p class="kick">Around the clock</p><h2>One of them won’t make it.</h2><p>LanePing checks every load against its appointment, even at 3 AM.</p></div>
-<div class="cap" data-i="2"><p class="kick">Hours ahead</p><h2>Dispatch knows first.</h2><p>The alert hits the board long before the broker picks up the phone.</p></div>
+<section style="padding: 64px 24px 0">
+<div style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px">
+<div class="lp-reveal lp-card" style="background: #FFFFFF; border: 1px solid #E3E1DA; border-radius: 14px; padding: 24px; display: flex; flex-direction: column; gap: 4px">
+<span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 48px; line-height: 1">200+</span>
+<span class="lp-bar" style="width: 56px; background: #F2B21B; margin: 8px 0 6px"></span>
+<span style="font-size: 15px; color: #4A5566">trucks dispatched on it every day by the team that built it</span>
 </div>
-<div class="alert" role="presentation"><span class="dot"></span><div><b>202 is now late</b><span>Load #B-200 · will reach pickup 11h 36m late</span></div></div>
+<div class="lp-reveal lp-card" style="background: #FFFFFF; border: 1px solid #E3E1DA; border-radius: 14px; padding: 24px; display: flex; flex-direction: column; gap: 4px">
+<span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 48px; line-height: 1">~600</span>
+<span class="lp-bar" style="width: 56px; background: #F2B21B; margin: 8px 0 6px"></span>
+<span style="font-size: 15px; color: #4A5566">rate cons a week read by AI instead of typed in</span>
+</div>
+<div class="lp-reveal lp-card" style="background: #FFFFFF; border: 1px solid #E3E1DA; border-radius: 14px; padding: 24px; display: flex; flex-direction: column; gap: 4px">
+<span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 48px; line-height: 1">24/7</span>
+<span class="lp-bar" style="width: 56px; background: #F2B21B; margin: 8px 0 6px"></span>
+<span style="font-size: 15px; color: #4A5566">server watches every load, even when nobody is logged in</span>
+</div>
+<div class="lp-reveal lp-card" style="background: #FFFFFF; border: 1px solid #E3E1DA; border-radius: 14px; padding: 24px; display: flex; flex-direction: column; gap: 4px">
+<span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 48px; line-height: 1">1 day</span>
+<span class="lp-bar" style="width: 56px; background: #F2B21B; margin: 8px 0 6px"></span>
+<span style="font-size: 15px; color: #4A5566">usual setup time. We do it, you don't install anything</span>
+</div>
 </div>
 </section>
 
-<section id="say" aria-label="Know before the broker calls" style="background:#0E1A2B;color:#FFFFFF;height:180vh;position:relative">
-<div class="stick2"><p class="big"><span class="w">Know</span> <span class="w">before</span> <span class="w">the</span> <span class="w">broker</span> <span class="w">calls.</span></p></div>
+<section style="padding: 72px 24px 0">
+<div style="max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 32px">
+<div class="lp-reveal" style="display: flex; flex-direction: column; gap: 12px; max-width: 760px">
+<p style="margin: 0; font-size: 14px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: #8F6100">One load, start to paid</p>
+<h2 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 46px; line-height: 1.05">From rate con to driver statement without retyping anything</h2>
+</div>
+<div class="lp-reveal" style="background: #0E1A2B; border-radius: 18px; padding: 36px 28px; display: flex; flex-direction: column; gap: 28px; color: #FFFFFF">
+<div style="position: relative; height: 4px; background: #24384F; border-radius: 4px; margin: 0 8px">
+<span class="lp-travel" style="background: #F2B21B; box-shadow: 0 0 18px #F2B21B"></span>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px">
+<div style="display: flex; flex-direction: column; gap: 6px"><span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 22px; color: #F2B21B">1 · Rate con</span><span style="font-size: 15px; line-height: 1.5; color: #C9D3E0">AI fills stops, windows, broker and rate</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 22px; color: #F2B21B">2 · Dispatch</span><span style="font-size: 15px; line-height: 1.5; color: #C9D3E0">Pick the nearest empty truck</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 22px; color: #F2B21B">3 · Tracking</span><span style="font-size: 15px; line-height: 1.5; color: #C9D3E0">Late and at-risk flagged before it happens</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 22px; color: #F2B21B">4 · Delivered</span><span style="font-size: 15px; line-height: 1.5; color: #C9D3E0">BOL and POD uploaded to the load</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 22px; color: #F2B21B">5 · Invoice</span><span style="font-size: 15px; line-height: 1.5; color: #C9D3E0">To the broker or the factoring company</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 22px; color: #F2B21B">6 · Statement</span><span style="font-size: 15px; line-height: 1.5; color: #C9D3E0">Driver or owner paid, deductions applied</span></div>
+</div>
+</div>
+</div>
 </section>
 
-<section id="features" style="padding: 96px 24px 40px">
+<section style="padding: 72px 24px 0">
+<div style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px">
+<div class="lp-reveal" style="background: #FFFFFF; border: 1px solid #E3E1DA; border-radius: 18px; padding: 32px; display: flex; flex-direction: column; gap: 16px">
+<h3 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 30px; color: #6B7480">Your office today</h3>
+<ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 12px; font-size: 16px; line-height: 1.5; color: #4A5566">
+<li style="display: flex; gap: 10px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C2361F" stroke-width="2.5" stroke-linecap="round" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M6 6l12 12M18 6L6 18"></path></svg>Rate cons typed in by hand, one stop at a time</li>
+<li style="display: flex; gap: 10px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C2361F" stroke-width="2.5" stroke-linecap="round" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M6 6l12 12M18 6L6 18"></path></svg>Broker calls first to say the truck is late</li>
+<li style="display: flex; gap: 10px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C2361F" stroke-width="2.5" stroke-linecap="round" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M6 6l12 12M18 6L6 18"></path></svg>Factoring rejects invoices missing a POD</li>
+<li style="display: flex; gap: 10px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C2361F" stroke-width="2.5" stroke-linecap="round" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M6 6l12 12M18 6L6 18"></path></svg>Statements built in spreadsheets every week</li>
+<li style="display: flex; gap: 10px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C2361F" stroke-width="2.5" stroke-linecap="round" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M6 6l12 12M18 6L6 18"></path></svg>Driver files scattered across emails and folders</li>
+</ul>
+</div>
+<div class="lp-reveal" style="background: #0E1A2B; color: #FFFFFF; border-radius: 18px; padding: 32px; display: flex; flex-direction: column; gap: 16px">
+<h3 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 30px; color: #F2B21B">Your office on LanePing</h3>
+<ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 12px; font-size: 16px; line-height: 1.5; color: #E3E9F1">
+<li style="display: flex; gap: 10px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M5 12l5 5L20 7"></path></svg>Upload the PDF, check it, save the load</li>
+<li style="display: flex; gap: 10px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M5 12l5 5L20 7"></path></svg>You know hours ahead and call the broker first</li>
+<li style="display: flex; gap: 10px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M5 12l5 5L20 7"></path></svg>Factoring packets go out with BOL and POD attached</li>
+<li style="display: flex; gap: 10px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M5 12l5 5L20 7"></path></svg>Statements built from the loads, deductions included</li>
+<li style="display: flex; gap: 10px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M5 12l5 5L20 7"></path></svg>Every driver file on the driver's record</li>
+</ul>
+</div>
+</div>
+</section>
+
+<section style="padding: 72px 24px 0">
+<div style="max-width: 1200px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 40px; align-items: center">
+<div class="lp-reveal" style="flex: 1 1 360px; min-width: 0; display: flex; flex-direction: column; gap: 14px">
+<p style="margin: 0; font-size: 14px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: #8F6100">AI rate con reading</p>
+<h2 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 46px; line-height: 1.05">Drop in the rate con. Watch the load fill itself.</h2>
+<p style="margin: 0; font-size: 18px; line-height: 1.6; color: #4A5566">Stops, appointment windows, broker, load number and rate are read straight from the PDF or a photo. Your dispatcher checks it and saves. No more typing every stop by hand.</p>
+</div>
+<div class="lp-reveal" aria-hidden="true" style="flex: 1 1 520px; min-width: 0; display: flex; flex-wrap: wrap; gap: 18px; align-items: stretch">
+<div style="flex: 1 1 200px; position: relative; background: #FFFFFF; border: 1px solid #E3E1DA; border-radius: 14px; padding: 22px; display: flex; flex-direction: column; gap: 10px; overflow: hidden; min-height: 260px">
+<span style="font-size: 12px; font-weight: 700; color: #6B7480; letter-spacing: 1px">RATE_CONFIRMATION.PDF</span>
+<span style="display: block; height: 10px; width: 70%; border-radius: 4px; background: #E3E1DA"></span>
+<span style="display: block; height: 10px; width: 90%; border-radius: 4px; background: #EEECE6"></span>
+<span style="display: block; height: 10px; width: 60%; border-radius: 4px; background: #EEECE6"></span>
+<span style="display: block; height: 10px; width: 85%; border-radius: 4px; background: #E3E1DA"></span>
+<span style="display: block; height: 10px; width: 50%; border-radius: 4px; background: #EEECE6"></span>
+<span style="display: block; height: 10px; width: 75%; border-radius: 4px; background: #EEECE6"></span>
+<span style="display: block; height: 10px; width: 65%; border-radius: 4px; background: #E3E1DA"></span>
+<span style="display: block; height: 10px; width: 80%; border-radius: 4px; background: #EEECE6"></span>
+<span class="lp-scan" style="background: #F2B21B; box-shadow: 0 0 16px 4px rgba(242,178,27,.6)"></span>
+</div>
+<div style="flex: 1 1 260px; background: #0E1A2B; color: #FFFFFF; border-radius: 14px; padding: 22px; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 13px; font-weight: 700; color: #9FB0C5; letter-spacing: 1px"><span>NEW LOAD</span><span style="display: flex; align-items: center; gap: 6px; color: #F2B21B"><svg class="lp-spin" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#F2B21B" stroke-width="3" stroke-linecap="round"><path d="M12 3a9 9 0 1 0 9 9"></path></svg>AI reading</span></div>
+<div class="lp-field" style="background: #16263D; border-radius: 8px; padding: 10px 12px; font-size: 14px"><span style="color: #9FB0C5">Broker</span> · Example Logistics</div>
+<div class="lp-field lp-f2" style="background: #16263D; border-radius: 8px; padding: 10px 12px; font-size: 14px"><span style="color: #9FB0C5">Pickup</span> · Joliet, IL · 08:00–12:00 CT</div>
+<div class="lp-field lp-f3" style="background: #16263D; border-radius: 8px; padding: 10px 12px; font-size: 14px"><span style="color: #9FB0C5">Delivery</span> · Columbus, OH · 06:00 ET</div>
+<div class="lp-field lp-f4" style="background: #16263D; border-radius: 8px; padding: 10px 12px; font-size: 14px"><span style="color: #9FB0C5">Load #</span> · 4471928</div>
+<div class="lp-field lp-f5" style="background: #16263D; border-radius: 8px; padding: 10px 12px; font-size: 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px"><span><span style="color: #9FB0C5">Rate</span> · $1,850.00</span><span class="lp-check" style="width: 22px; height: 22px; border-radius: 50%; background: #22C55E; align-items: center; justify-content: center"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#0E1A2B" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"></path></svg></span></div>
+</div>
+</div>
+</div>
+</section>
+
+<section id="modules" style="padding: 96px 24px 40px">
 <div style="max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 40px">
 <div style="display: flex; flex-direction: column; gap: 12px; max-width: 760px">
-<h2 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 46px; line-height: 1.05">Built for the problems dispatch deals with every day</h2>
-<p style="margin: 0; font-size: 18px; line-height: 1.6; color: #4A5566">Each part of LanePing answers a question your dispatchers ask a dozen times a shift.</p>
+<h2 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 46px; line-height: 1.05">Everything a carrier runs on, in one place</h2>
+<p style="margin: 0; font-size: 18px; line-height: 1.6; color: #4A5566">No more jumping between a load spreadsheet, the ELD portal, a billing program and a folder of driver files.</p>
 </div>
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px">
 
-<div class="fx rv" style="background: #FFFFFF; border: 1px solid #E3E1DA; border-radius: 14px; padding: 28px; display: flex; flex-direction: column; gap: 12px">
-<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C2361F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"></circle><path d="M12 9v4l2.5 2.5M9 2h6"></path></svg>
-<p style="margin: 0; font-size: 14px; font-weight: 600; color: #4A5566">“The broker called before we knew.”</p>
-<h3 style="margin: 0; font-size: 21px; line-height: 1.3">Late loads turn red hours ahead</h3>
-<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5566">Every load is checked against its appointment or time window around the clock, with the right time zone for each stop. At risk and late show before the appointment, not after.</p>
+<div class="lp-card lp-reveal" style="background: #FFFFFF; border: 1px solid #E3E1DA; border-radius: 14px; padding: 28px; display: flex; flex-direction: column; gap: 12px">
+<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C2361F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"></path><circle cx="12" cy="10" r="2.5"></circle></svg>
+<p style="margin: 0; font-size: 14px; font-weight: 600; color: #4A5566">Dispatch</p>
+<h3 style="margin: 0; font-size: 21px; line-height: 1.3">Live map that flags late loads early</h3>
+<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5566">Every truck and every load on one board, with miles and ETA to the next stop in the right time zone. At risk and late show before the appointment, with alerts when a truck arrives or stops while late.</p>
 </div>
 
-<div class="fx rv" style="background: #FFFFFF; border: 1px solid #E3E1DA; border-radius: 14px; padding: 28px; display: flex; flex-direction: column; gap: 12px">
-<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0E1A2B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"></path><circle cx="12" cy="10" r="2.5"></circle></svg>
-<p style="margin: 0; font-size: 14px; font-weight: 600; color: #4A5566">“How far is he from the pickup?”</p>
-<h3 style="margin: 0; font-size: 21px; line-height: 1.3">Miles and ETA to the next stop</h3>
-<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5566">Before a load is marked Loaded, the board tracks the truck to the shipper. Once it is loaded, it switches to each delivery in turn, recalculated as the truck moves.</p>
-</div>
-
-<div class="fx rv" style="background: #FFFFFF; border: 1px solid #E3E1DA; border-radius: 14px; padding: 28px; display: flex; flex-direction: column; gap: 12px">
-<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#6B7480" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8.8a15 15 0 0 1 20 0M5 12.5a10 10 0 0 1 14 0M8.5 16a5 5 0 0 1 7 0"></path><path d="M3 3l18 18"></path></svg>
-<p style="margin: 0; font-size: 14px; font-weight: 600; color: #4A5566">“The map says Illinois. He's in Ohio.”</p>
-<h3 style="margin: 0; font-size: 21px; line-height: 1.3">Bad GPS is never passed off as real</h3>
-<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5566">Trucks whose box stopped reporting turn gray instead of looking parked. If Samsara lists a unit number twice, loads stay on the one with live GPS automatically.</p>
-</div>
-
-<div class="fx rv" style="background: #FFFFFF; border: 1px solid #E3E1DA; border-radius: 14px; padding: 28px; display: flex; flex-direction: column; gap: 12px">
-<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1E7A46" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4.3-4.3"></path></svg>
-<p style="margin: 0; font-size: 14px; font-weight: 600; color: #4A5566">“Who's closest to this load?”</p>
-<h3 style="margin: 0; font-size: 21px; line-height: 1.3">Find the nearest empty truck</h3>
-<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5566">Type a pickup address and get your empty trucks ranked by road miles. The truck list is grouped by empty and loaded, sorted by unit number.</p>
-</div>
-
-<div class="fx rv" style="background: #FFFFFF; border: 1px solid #E3E1DA; border-radius: 14px; padding: 28px; display: flex; flex-direction: column; gap: 12px">
-<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0E1A2B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"></rect><path d="M9 8h6M9 12h6M9 16h3"></path></svg>
-<p style="margin: 0; font-size: 14px; font-weight: 600; color: #4A5566">“We never bill detention.”</p>
-<h3 style="margin: 0; font-size: 21px; line-height: 1.3">Detention with proof, and the invoice</h3>
-<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5566">Arrival and departure at every stop are logged from GPS. When free time runs out the clock starts, and a ready-to-send invoice is built for the broker.</p>
-</div>
-
-<div class="fx rv" style="background: #FFFFFF; border: 1px solid #E3E1DA; border-radius: 14px; padding: 28px; display: flex; flex-direction: column; gap: 12px">
+<div class="lp-card lp-reveal" style="background: #FFFFFF; border: 1px solid #E3E1DA; border-radius: 14px; padding: 28px; display: flex; flex-direction: column; gap: 12px">
 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0E1A2B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"></path><path d="M14 3v5h5M12 18v-6M9 15l3 3 3-3"></path></svg>
-<p style="margin: 0; font-size: 14px; font-weight: 600; color: #4A5566">“Typing in rate cons takes forever.”</p>
+<p style="margin: 0; font-size: 14px; font-weight: 600; color: #4A5566">Loads</p>
 <h3 style="margin: 0; font-size: 21px; line-height: 1.3">Upload a rate con, the load fills itself</h3>
-<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5566">Drop in the PDF, a photo or the email chain. AI reads the stops, times, windows and broker, and fills the New Load form for your dispatcher to check.</p>
+<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5566">Drop in the PDF or a photo. AI reads stops, times, windows, broker and rate, and fills the load for your dispatcher to check. Built for hundreds of rate cons a week.</p>
+</div>
+
+<div class="lp-card lp-reveal" style="background: #FFFFFF; border: 1px solid #E3E1DA; border-radius: 14px; padding: 28px; display: flex; flex-direction: column; gap: 12px">
+<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1E7A46" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"></rect><path d="M8 8h8M8 12h8M8 16h5"></path></svg>
+<p style="margin: 0; font-size: 14px; font-weight: 600; color: #4A5566">Billing</p>
+<h3 style="margin: 0; font-size: 21px; line-height: 1.3">Invoices and factoring packets</h3>
+<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5566">Delivered loads turn into invoices. Factored loads go out with the BOL and POD attached, so nothing gets rejected for missing paperwork. Detention is logged from GPS and billed with proof.</p>
+</div>
+
+<div class="lp-card lp-reveal" style="background: #FFFFFF; border: 1px solid #E3E1DA; border-radius: 14px; padding: 28px; display: flex; flex-direction: column; gap: 12px">
+<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0E1A2B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h18v10H3z"></path><circle cx="12" cy="12" r="2.5"></circle><path d="M6 10v4M18 10v4"></path></svg>
+<p style="margin: 0; font-size: 14px; font-weight: 600; color: #4A5566">Accounting</p>
+<h3 style="margin: 0; font-size: 21px; line-height: 1.3">Driver and owner statements</h3>
+<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5566">Set the dispatch fee for owner-operators, then deduct tickets, repairs, roadside, PM services or any item you name. Drivers hired by owners settle on the owner's statement.</p>
+</div>
+
+<div class="lp-card lp-reveal" style="background: #FFFFFF; border: 1px solid #E3E1DA; border-radius: 14px; padding: 28px; display: flex; flex-direction: column; gap: 12px">
+<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0E1A2B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"></circle><path d="M2.5 20a6.5 6.5 0 0 1 13 0"></path><path d="M16 4h5M16 8h5M17 12h4"></path></svg>
+<p style="margin: 0; font-size: 14px; font-weight: 600; color: #4A5566">Drivers</p>
+<h3 style="margin: 0; font-size: 21px; line-height: 1.3">Every driver file, ready for an audit</h3>
+<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5566">CDL, medical, MVR, PSP, Clearinghouse, drug test, application, insurance, contract, ACH and tax forms on each driver's record, plus any custom file you add.</p>
+</div>
+
+<div class="lp-card lp-reveal" style="background: #FFFFFF; border: 1px solid #E3E1DA; border-radius: 14px; padding: 28px; display: flex; flex-direction: column; gap: 12px">
+<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#6B7480" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="13" height="9" rx="1"></rect><path d="M15 10h4l3 3v3h-7"></path><circle cx="6" cy="18" r="2"></circle><circle cx="18" cy="18" r="2"></circle></svg>
+<p style="margin: 0; font-size: 14px; font-weight: 600; color: #4A5566">Fleet</p>
+<h3 style="margin: 0; font-size: 21px; line-height: 1.3">Trucks, owners and the nearest empty unit</h3>
+<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5566">Keep each truck with its owner and driver. Type a pickup address and get empty trucks ranked by road miles. Units with dead GPS show gray, never as parked.</p>
 </div>
 
 </div>
 </div>
 </section>
 
-<section style="padding: 56px 24px">
+<section id="teams" style="padding: 56px 24px">
 <div style="max-width: 1200px; margin: 0 auto; background: #FFFFFF; border: 1px solid #E3E1DA; border-radius: 18px; padding: 40px; display: flex; flex-direction: column; gap: 28px">
-<h2 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 38px; line-height: 1.05">One load, start to finish</h2>
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px">
+<div style="display: flex; flex-direction: column; gap: 10px; max-width: 760px">
+<h2 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 38px; line-height: 1.05">Each team sees its own work. The admin sees everything.</h2>
+<p style="margin: 0; font-size: 17px; line-height: 1.6; color: #4A5566">Pick which tabs each team gets. New people on that team get the same setup automatically.</p>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px">
 <div style="display: flex; flex-direction: column; gap: 8px">
-<span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 20px; color: #8F6100">1 · Heading to pickup</span>
-<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5566">Empty truck, miles and ETA to the shipper. On time, at risk or late for pickup.</p>
+<span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 22px; color: #8F6100">Admin</span>
+<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5566">Oversees every team, load, invoice and statement. Adds users and sets what each team can open.</p>
 </div>
 <div style="display: flex; flex-direction: column; gap: 8px">
-<span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 20px; color: #8F6100">2 · At the shipper</span>
-<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5566">Arrival is logged automatically. A popup and sound tell dispatch the truck is there.</p>
+<span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 22px; color: #8F6100">Tracking</span>
+<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5566">Live map, loads, alerts and the notifications bar. Nothing from billing or pay.</p>
 </div>
 <div style="display: flex; flex-direction: column; gap: 8px">
-<span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 20px; color: #8F6100">3 · Loaded and rolling</span>
-<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5566">Tick Loaded and tracking moves to the delivery, with alerts if the truck falls behind or stops while late.</p>
+<span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 22px; color: #8F6100">Billing</span>
+<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5566">Delivered loads, documents, invoices and factoring.</p>
 </div>
 <div style="display: flex; flex-direction: column; gap: 8px">
-<span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 20px; color: #8F6100">4 · Delivered</span>
-<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5566">Marked done on arrival. Any detention is on record with times, ready to bill.</p>
+<span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 22px; color: #8F6100">Fleet &amp; Accounting</span>
+<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5566">Trucks, drivers and their files, deductions and weekly statements.</p>
 </div>
 </div>
 </div>
@@ -227,48 +359,139 @@ a[href="#demo"]:hover,button[type=submit]:hover{transform:translateY(-2px);filte
 <section id="how" style="padding: 56px 24px">
 <div style="max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 36px">
 <div style="display: flex; flex-direction: column; gap: 12px; max-width: 760px">
-<h2 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 46px; line-height: 1.05">We set it up. You start dispatching.</h2>
-<p style="margin: 0; font-size: 18px; line-height: 1.6; color: #4A5566">Your own private board, on your own login, with your trucks already on the map.</p>
+<h2 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 46px; line-height: 1.05">We set it up. Your teams start working.</h2>
+<p style="margin: 0; font-size: 18px; line-height: 1.6; color: #4A5566">Your own private system, with your trucks on the map and your teams' logins ready.</p>
 </div>
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px">
-<div class="fx rv" style="background: #0E1A2B; color: #FFFFFF; border-radius: 14px; padding: 28px; display: flex; flex-direction: column; gap: 10px">
+<div style="background: #0E1A2B; color: #FFFFFF; border-radius: 14px; padding: 28px; display: flex; flex-direction: column; gap: 10px">
 <span style="width: 44px; height: 44px; border-radius: 10px; background: #F2B21B; color: #0E1A2B; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 26px; display: flex; align-items: center; justify-content: center">1</span>
-<h3 style="margin: 0; font-size: 21px">Book a 15-minute demo</h3>
-<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #C9D3E0">See the board live and ask anything about how your dispatch team works.</p>
+<h3 style="margin: 0; font-size: 21px">Book a demo</h3>
+<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #C9D3E0">We walk through dispatch, billing and statements and ask how your office works today.</p>
 </div>
-<div class="fx rv" style="background: #0E1A2B; color: #FFFFFF; border-radius: 14px; padding: 28px; display: flex; flex-direction: column; gap: 10px">
+<div style="background: #0E1A2B; color: #FFFFFF; border-radius: 14px; padding: 28px; display: flex; flex-direction: column; gap: 10px">
 <span style="width: 44px; height: 44px; border-radius: 10px; background: #F2B21B; color: #0E1A2B; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 26px; display: flex; align-items: center; justify-content: center">2</span>
-<h3 style="margin: 0; font-size: 21px">Send your Samsara API token</h3>
-<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #C9D3E0">Created in your Samsara settings in two minutes. Read-only access to truck locations.</p>
+<h3 style="margin: 0; font-size: 21px">Connect your ELD, send your lists</h3>
+<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #C9D3E0">A read-only API token from Samsara or Synergy, plus your trucks, drivers and team members. We load them in.</p>
 </div>
-<div class="fx rv" style="background: #0E1A2B; color: #FFFFFF; border-radius: 14px; padding: 28px; display: flex; flex-direction: column; gap: 10px">
+<div style="background: #0E1A2B; color: #FFFFFF; border-radius: 14px; padding: 28px; display: flex; flex-direction: column; gap: 10px">
 <span style="width: 44px; height: 44px; border-radius: 10px; background: #F2B21B; color: #0E1A2B; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 26px; display: flex; align-items: center; justify-content: center">3</span>
-<h3 style="margin: 0; font-size: 21px">Your board goes live</h3>
-<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #C9D3E0">Usually within one business day. Your dispatchers log in from any browser.</p>
+<h3 style="margin: 0; font-size: 21px">Your TMS goes live</h3>
+<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #C9D3E0">Each person signs in from any browser with their own email and a 2-step code.</p>
 </div>
 </div>
 </div>
 </section>
 
 <section id="pricing" style="padding: 56px 24px">
-<div style="max-width: 1200px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 32px; align-items: stretch">
-<div style="flex: 1 1 360px; min-width: 0; display: flex; flex-direction: column; gap: 14px; justify-content: center">
+<div style="max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 28px">
+<div style="display: flex; flex-direction: column; gap: 12px; max-width: 760px">
 <h2 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 46px; line-height: 1.05">Simple pricing</h2>
-<p style="margin: 0; font-size: 18px; line-height: 1.6; color: #4A5566">One setup fee, then a monthly price per truck. No hardware, no installs in the cab.</p>
+<p style="margin: 0; font-size: 18px; line-height: 1.6; color: #4A5566">One setup fee, then a monthly price per truck. Start with tracking or run your whole office on it.</p>
 </div>
-<div style="flex: 1 1 460px; min-width: 0; background: #FFFFFF; border: 2px solid #0E1A2B; border-radius: 18px; padding: 36px; display: flex; flex-direction: column; gap: 18px">
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px">
+
+<div class="lp-card" style="background: #FFFFFF; border: 1px solid #E3E1DA; border-radius: 18px; padding: 36px; display: flex; flex-direction: column; gap: 18px">
+<h3 style="margin: 0; font-size: 22px">Tracking</h3>
 <div style="display: flex; flex-wrap: wrap; gap: 28px">
-<div style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 14px; font-weight: 600; color: rgb(74, 85, 102)">Setup, one time</span><span style="font-family: &quot;Barlow Condensed&quot;, sans-serif; font-weight: 700; font-size: 44px">$299</span></div>
-<div style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 14px; font-weight: 600; color: rgb(74, 85, 102)">Per truck, per month</span><span style="font-family: &quot;Barlow Condensed&quot;, sans-serif; font-weight: 700; font-size: 44px">$17.99</span></div>
+<div style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 14px; font-weight: 600; color: #4A5566">Setup, one time</span><span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 44px">$399</span></div>
+<div style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 14px; font-weight: 600; color: #4A5566">Per truck, per month</span><span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 44px">$10</span></div>
 </div>
 <ul style="margin: 0; padding: 0 0 0 20px; display: flex; flex-direction: column; gap: 8px; font-size: 16px; line-height: 1.5">
-<li>Live map, late and on-time tracking for every load</li>
+<li>Live map with late and on-time tracking</li>
 <li>Alerts for late and stopped trucks, 24/7</li>
-<li>Detention logging and invoices</li>
 <li>AI rate con reading</li>
-<li>Your own private site and login</li>
+<li>Detention logging</li>
+<li>Email support within 1 business day, urgent issues within 4 hours, 7 days a week</li>
 </ul>
-<a href="#demo" style="align-self: flex-start; background: #F2B21B; color: #0E1A2B; text-decoration: none; font-weight: 700; font-size: 17px; padding: 15px 24px; border-radius: 8px">Book a demo</a>
+<a href="#demo" style="align-self: flex-start; color: #0E1A2B; text-decoration: none; font-weight: 700; font-size: 17px; padding: 14px 22px; border-radius: 8px; border: 2px solid #0E1A2B">Book a demo</a>
+</div>
+
+<div class="lp-card" style="background: #FFFFFF; border: 2px solid #0E1A2B; border-radius: 18px; padding: 36px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 20px 50px rgba(14,26,43,.12)">
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px"><h3 style="margin: 0; font-size: 22px">Full TMS</h3><span class="lp-glow" style="background: #F2B21B; color: #0E1A2B; font-size: 12px; font-weight: 700; border-radius: 999px; padding: 4px 10px">Best value · everything</span></div>
+<div style="display: flex; flex-wrap: wrap; gap: 28px">
+<div style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 14px; font-weight: 600; color: #4A5566">Setup, one time</span><span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 44px">$699</span></div>
+<div style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 14px; font-weight: 600; color: #4A5566">Per truck, per month</span><span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 44px">from $17.99</span></div>
+</div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px">
+<div style="background: #F6F5F1; border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 13px; font-weight: 600; color: #4A5566">1–10 trucks</span><span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 28px">$25</span></div>
+<div style="background: #F6F5F1; border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 13px; font-weight: 600; color: #4A5566">11–25 trucks</span><span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 28px">$20</span></div>
+<div style="background: #0E1A2B; color: #FFFFFF; border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 13px; font-weight: 600; color: #C9D3E0">26+ trucks</span><span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 28px; color: #F2B21B">$17.99</span></div>
+</div>
+<ul style="margin: 0; padding: 0 0 0 20px; display: flex; flex-direction: column; gap: 8px; font-size: 16px; line-height: 1.5">
+<li>Everything in Tracking</li>
+<li>Billing, invoices and factoring packets</li>
+<li>Driver and owner statements with deductions</li>
+<li>Driver files and fleet records</li>
+<li>Admin page and separate team logins</li>
+<li>Documents kept until you delete them</li>
+<li>Email support within 1 business day, urgent issues within 4 hours, 7 days a week</li>
+</ul>
+<a href="#demo" class="lp-btn" style="align-self: flex-start; background: #F2B21B; color: #0E1A2B; text-decoration: none; font-weight: 700; font-size: 17px; padding: 15px 24px; border-radius: 8px">Book a demo</a>
+</div>
+
+</div>
+
+<div class="lp-reveal" style="background: #0E1A2B; color: #FFFFFF; border-radius: 18px; padding: 32px; display: flex; flex-direction: column; gap: 22px">
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 12px">
+<h3 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 32px">What would your fleet pay?</h3>
+<label for="lp-trucks" style="font-size: 16px; color: #C9D3E0">Trucks: <b style="font-family: 'Barlow Condensed', sans-serif; font-size: 34px; color: #F2B21B"><span data-calc="trucks">25</span></b></label>
+</div>
+<input id="lp-trucks" type="range" min="1" max="300" step="1" value="25" style="width: 100%; height: 28px; accent-color: #F2B21B">
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px">
+<div style="background: #16263D; border: 1px solid #24384F; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 6px">
+<span style="font-size: 14px; font-weight: 600; color: #9FB0C5">Tracking, per month</span>
+<span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 44px; line-height: 1"><span data-calc="trackMonthly">$250.00</span></span>
+<span style="font-size: 14px; color: #C9D3E0">First month with setup: <span data-calc="trackFirst">$649.00</span></span>
+</div>
+<div style="background: #16263D; border: 1px solid #F2B21B; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 6px">
+<span style="font-size: 14px; font-weight: 600; color: #9FB0C5">Full TMS, per month</span>
+<span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 44px; line-height: 1; color: #F2B21B"><span data-calc="tmsMonthly">$500.00</span></span>
+<span style="font-size: 14px; color: #C9D3E0">First month with setup: <span data-calc="tmsFirst">$1,199.00</span></span>
+</div>
+</div>
+<p style="margin: 0; font-size: 14px; color: #9FB0C5">At <span data-calc="trucks">25</span> trucks, Full TMS is <span data-calc="tmsRate">$20.00</span> per truck. The more trucks, the lower the price per truck.</p>
+</div>
+</div>
+</section>
+
+<section id="support" style="padding: 56px 24px">
+<div style="max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 28px">
+<div class="lp-reveal" style="display: flex; flex-direction: column; gap: 12px; max-width: 760px">
+<p style="margin: 0; font-size: 14px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: #8F6100">Support</p>
+<h2 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 46px; line-height: 1.05">Real help from the people who built it</h2>
+<p style="margin: 0; font-size: 18px; line-height: 1.6; color: #4A5566">Included with every plan. No contracts, no surprise fees.</p>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px">
+<div class="lp-card lp-reveal" style="background: #FFFFFF; border: 1px solid #E3E1DA; border-radius: 14px; padding: 28px; display: flex; flex-direction: column; gap: 14px">
+<h3 style="margin: 0; font-size: 21px">Included with every plan</h3>
+<ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; font-size: 16px; line-height: 1.5; color: #4A5566">
+<li style="display: flex; gap: 10px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1E7A46" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M5 12l5 5L20 7"></path></svg><span>Email support, reply within 1 business day, usually the same day</span></li>
+<li style="display: flex; gap: 10px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1E7A46" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M5 12l5 5L20 7"></path></svg><span>Support hours Monday–Friday, 9 AM–5 PM US Central</span></li>
+<li style="display: flex; gap: 10px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1E7A46" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M5 12l5 5L20 7"></path></svg><span>Urgent issues (system down for your company) answered within 4 hours, 7 days a week</span></li>
+<li style="display: flex; gap: 10px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1E7A46" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M5 12l5 5L20 7"></path></svg><span>All updates and new features at no extra cost</span></li>
+<li style="display: flex; gap: 10px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1E7A46" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M5 12l5 5L20 7"></path></svg><span>Setup done for you, plus a 30-minute training call for your team</span></li>
+</ul>
+</div>
+
+<div class="lp-card lp-reveal" style="background: #FFFFFF; border: 1px solid #E3E1DA; border-radius: 14px; padding: 28px; display: flex; flex-direction: column; gap: 14px">
+<h3 style="margin: 0; font-size: 21px">Optional extras</h3>
+<ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; font-size: 16px; line-height: 1.5; color: #4A5566">
+<li style="display: flex; gap: 10px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1E7A46" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M5 12l5 5L20 7"></path></svg><span>Priority support with a direct phone / WhatsApp line: $99 per month</span></li>
+<li style="display: flex; gap: 10px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1E7A46" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M5 12l5 5L20 7"></path></svg><span>Custom features built just for your company: quoted per job</span></li>
+<li style="display: flex; gap: 10px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1E7A46" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M5 12l5 5L20 7"></path></svg><span>Extra team training sessions: $50 each</span></li>
+</ul>
+</div>
+
+<div class="lp-card lp-reveal" style="background: #FFFFFF; border: 1px solid #E3E1DA; border-radius: 14px; padding: 28px; display: flex; flex-direction: column; gap: 14px">
+<h3 style="margin: 0; font-size: 21px">Simple terms</h3>
+<ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; font-size: 16px; line-height: 1.5; color: #4A5566">
+<li style="display: flex; gap: 10px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1E7A46" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M5 12l5 5L20 7"></path></svg><span>Month to month, cancel anytime with 30 days' notice</span></li>
+<li style="display: flex; gap: 10px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1E7A46" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M5 12l5 5L20 7"></path></svg><span>Setup fee is non-refundable once your system is set up</span></li>
+<li style="display: flex; gap: 10px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1E7A46" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M5 12l5 5L20 7"></path></svg><span>We aim for 99.5% uptime</span></li>
+<li style="display: flex; gap: 10px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1E7A46" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M5 12l5 5L20 7"></path></svg><span>Your data stays yours and is never shared</span></li>
+</ul>
+</div>
+
 </div>
 </div>
 </section>
@@ -278,41 +501,43 @@ a[href="#demo"]:hover,button[type=submit]:hover{transform:translateY(-2px);filte
 <h2 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 46px; line-height: 1.05">Questions</h2>
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 28px 40px">
 <div style="display: flex; flex-direction: column; gap: 8px">
-<h3 style="margin: 0; font-size: 19px">We already pay for Samsara. Why this?</h3>
-<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5566">Samsara shows where trucks are. LanePing checks every load against its appointment and tells dispatch who will be late, before it happens.</p>
+<h3 style="margin: 0; font-size: 19px">We already have a TMS. Why switch?</h3>
+<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5566">Most TMS programs show where a load is after someone types it in. LanePing reads the rate con for you and watches every load against its appointment with live GPS, then carries it through to the invoice and the driver's statement.</p>
 </div>
 <div style="display: flex; flex-direction: column; gap: 8px">
 <h3 style="margin: 0; font-size: 19px">Is our data private?</h3>
-<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5566">Every company gets its own separate site and login. Your trucks, loads and brokers are never shared with anyone.</p>
+<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5566">Every company gets its own separate system. Records and documents open only for the people you authorize, and are kept until you delete them.</p>
 </div>
 <div style="display: flex; flex-direction: column; gap: 8px">
-<h3 style="margin: 0; font-size: 19px">We're not on Samsara.</h3>
-<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5566">Tell us your ELD when you book a demo. Other providers can be connected; we'll confirm the timeline on the call.</p>
+<h3 style="margin: 0; font-size: 19px">Which ELDs work?</h3>
+<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5566">Samsara and Synergy ELD today, side by side in the same fleet. Tell us yours when you book a demo and we'll confirm the timeline.</p>
 </div>
 <div style="display: flex; flex-direction: column; gap: 8px">
-<h3 style="margin: 0; font-size: 19px">Do drivers need to do anything?</h3>
-<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5566">No. Everything comes from the ELD that is already in the truck. Nothing new for drivers to install or learn.</p>
+<h3 style="margin: 0; font-size: 19px">Can we start with tracking only?</h3>
+<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5566">Yes. Start on Tracking and move to the Full TMS whenever you're ready. Your loads and history come with you.</p>
 </div>
 </div>
 </div>
 </section>
 
-<section id="demo" style="background: #0E1A2B; color: #FFFFFF; padding: 88px 24px; border-radius: 0px">
+<section id="demo" style="background: #0E1A2B; color: #FFFFFF; padding: 88px 24px">
 <div style="max-width: 1200px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 48px; align-items: flex-start">
 <div style="flex: 1 1 380px; min-width: 0; display: flex; flex-direction: column; gap: 16px">
-<h2 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 50px; line-height: 1.02">See your own fleet on the board</h2>
-<p style="margin: 0; font-size: 18px; line-height: 1.6; color: #C9D3E0">Fifteen minutes. We'll walk through a live board and answer how it fits your dispatch.</p>
-<p id="mailLine" style="margin: 0; font-size: 16px; color: #C9D3E0; font-weight: 400">Or email <a id="mailLink" href="#" style="color: #F2B21B"></a></p>
+<h2 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 50px; line-height: 1.02">See your office run on one system</h2>
+<p style="margin: 0; font-size: 18px; line-height: 1.6; color: #C9D3E0">Twenty minutes. We'll walk a load from rate con to driver statement and answer how it fits your teams.</p>
 </div>
-<form id="demoForm" novalidate style="flex: 1 1 480px; min-width: 0; background: #FFFFFF; color: #0E1A2B; border-radius: 16px; padding: 32px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px">
+<form name="demo" method="POST" action="https://lovely-beijinho-37fd21.netlify.app/thanks.html" data-netlify="true" netlify-honeypot="company_website" style="flex: 1 1 480px; min-width: 0; background: #FFFFFF; color: #0E1A2B; border-radius: 16px; padding: 32px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px">
+<input type="hidden" name="form-name" value="demo">
+<p style="display: none"><label>Leave empty<input name="company_website"></label></p>
 <label style="display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 600">Your name<input type="text" name="name" required autocomplete="name" style="font: 16px Inter, sans-serif; padding: 12px; border: 1px solid #B9BFC8; border-radius: 8px"></label>
 <label style="display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 600">Company<input type="text" name="company" required autocomplete="organization" style="font: 16px Inter, sans-serif; padding: 12px; border: 1px solid #B9BFC8; border-radius: 8px"></label>
 <label style="display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 600">Work email<input type="email" name="email" required autocomplete="email" style="font: 16px Inter, sans-serif; padding: 12px; border: 1px solid #B9BFC8; border-radius: 8px"></label>
 <label style="display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 600">Phone<input type="tel" name="phone" autocomplete="tel" style="font: 16px Inter, sans-serif; padding: 12px; border: 1px solid #B9BFC8; border-radius: 8px"></label>
 <label style="display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 600">Number of trucks<input type="number" name="trucks" min="1" style="font: 16px Inter, sans-serif; padding: 12px; border: 1px solid #B9BFC8; border-radius: 8px"></label>
-<label style="display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 600">Your ELD<select name="eld" style="font: 16px Inter, sans-serif; padding: 12px; border: 1px solid #B9BFC8; border-radius: 8px; background: #FFFFFF"><option>Samsara</option><option>Motive</option><option>Geotab</option><option>Other</option></select></label>
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 600">Interested in<select name="plan" style="font: 16px Inter, sans-serif; padding: 12px; border: 1px solid #B9BFC8; border-radius: 8px; background: #FFFFFF"><option>Full TMS</option><option>Tracking only</option><option>Not sure yet</option></select></label>
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 600">Your ELD<select name="eld" style="font: 16px Inter, sans-serif; padding: 12px; border: 1px solid #B9BFC8; border-radius: 8px; background: #FFFFFF"><option>Samsara</option><option>Synergy ELD</option><option>Motive</option><option>Geotab</option><option>Other</option></select></label>
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 600">Current TMS<input type="text" name="current_tms" style="font: 16px Inter, sans-serif; padding: 12px; border: 1px solid #B9BFC8; border-radius: 8px"></label>
 <button type="submit" style="grid-column: 1 / -1; background: #F2B21B; color: #0E1A2B; border: 0; font: 700 17px Inter, sans-serif; padding: 16px; border-radius: 8px; cursor: pointer">Request a demo</button>
-<p id="formMsg" role="status" style="grid-column: 1 / -1; margin: 0; min-height: 1.4em; font-weight: 600; font-size: 15px"></p>
 </form>
 </div>
 </section>
@@ -324,81 +549,15 @@ a[href="#demo"]:hover,button[type=submit]:hover{transform:translateY(-2px);filte
 </footer>
 
 </div>
+
 <script>
-// ---- scroll-driven scenes (Apple-style) ----
-(function () {
-  const still = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v)), ease = t => t < .5 ? 2*t*t : 1 - Math.pow(-2*t + 2, 2) / 2;
-  const board = document.getElementById('board'), story = document.getElementById('story'), say = document.getElementById('say');
-  const world = document.getElementById('world'), caps = story.querySelectorAll('.cap'), words = say.querySelectorAll('.w');
-  const prog = el => { const r = el.getBoundingClientRect(), span = r.height - innerHeight; return span > 0 ? clamp(-r.top / span) : (r.top < innerHeight / 2 ? 1 : 0); };
-  function scene(p) {
-    // zoom from the whole map into truck 202 between 30% and 70%
-    const z = ease(clamp((p - .28) / .42)), s = 1 + 2.2 * z, narrow = innerWidth < 760, X = 640 + ((narrow ? 600 : 820) - 640) * z, Y = 380 + ((narrow ? 470 : 360) - 380) * z;
-    world.setAttribute('transform', 'translate(' + (X - 640 * s).toFixed(1) + ' ' + (Y - 380 * s).toFixed(1) + ') scale(' + s.toFixed(3) + ')');
-    const centres = [.12, .5, .86];
-    caps.forEach((c, i) => c.style.setProperty('--o', clamp(1 - Math.abs(p - centres[i]) / .2).toFixed(3)));
-    caps[0].style.setProperty('--o', p < .12 ? 1 : clamp(1 - (p - .12) / .2).toFixed(3));
-    caps[2].style.setProperty('--o', p > .86 ? 1 : clamp(1 - (.86 - p) / .2).toFixed(3));
-    story.querySelector('.alert').style.setProperty('--a', ease(clamp((p - .66) / .14)).toFixed(3));
-  }
-  if (still) { scene(1); words.forEach(w => w.style.setProperty('--l', 1)); return; }
-  let ticking = false;
-  function frame() {
-    ticking = false;
-    board.style.setProperty('--hp', ease(clamp(scrollY / (innerHeight * .6))).toFixed(3));   // tilted at the top, flat once you scroll
-    scene(prog(story));
-    const q = prog(say), n = words.length;
-    words.forEach((w, i) => w.style.setProperty('--l', clamp((q * 1.25 - i / n) * n).toFixed(3)));
-  }
-  addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(frame); } }, { passive: true });
-  addEventListener('resize', frame); frame();
-})();
-// ---- motion ----
-(function () {
-  const still = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches, map = document.getElementById('heroMap');
-  if (still) { if (map && map.pauseAnimations) map.pauseAnimations(); return; }
-  if (!('IntersectionObserver' in window)) return;
-  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.remove('pre'); io.unobserve(e.target); } }), { threshold: .15 });
-  document.querySelectorAll('.rv').forEach((el, i) => {
-    if (el.getBoundingClientRect().top < innerHeight) return;        // already on screen: leave as is
-    el.classList.add('pre'); el.style.transitionDelay = (i % 3) * 90 + 'ms'; io.observe(el);
-  });
-})();
-// ===== SETTINGS: fill these two in =====
-// 1) formEndpoint: your free Formspree link (see README). Demo requests then arrive in your email.
-// 2) email: your LanePing email address, shown on the page and used if the form can't send.
-const CONFIG = {
-  formEndpoint: 'https://formspree.io/f/xgaanooe',          // e.g. 'https://formspree.io/f/abcdwxyz'
-  email: '',                 // e.g. 'hello@laneping.com'
-};
-// =======================================
-(function () {
-  const line = document.getElementById('mailLine'), link = document.getElementById('mailLink');
-  if (CONFIG.email) { link.textContent = CONFIG.email; link.href = 'mailto:' + CONFIG.email; } else line.hidden = true;
-  const f = document.getElementById('demoForm'), msg = document.getElementById('formMsg'), btn = f.querySelector('button[type=submit]');
-  const say = (t, ok) => { msg.textContent = t; msg.style.color = ok ? '#15803D' : '#B91C1C'; };
-  f.addEventListener('submit', async e => {
-    e.preventDefault();
-    const d = Object.fromEntries(new FormData(f));
-    if (!d.name || !d.company) return say('Please add your name and company.');
-    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.email || '')) return say('Please add a valid work email.');
-    if (CONFIG.formEndpoint) {
-      btn.disabled = true; say('Sending…', true);
-      try {
-        const r = await fetch(CONFIG.formEndpoint, { method: 'POST', headers: { Accept: 'application/json' }, body: new FormData(f) });
-        if (!r.ok) throw Error();
-        f.reset(); say('Thanks! We got your request and will get back to you soon to set up the demo.', true);
-      } catch (_) { say('Something went wrong sending the form. Please try again' + (CONFIG.email ? ' or email ' + CONFIG.email : '') + '.'); }
-      btn.disabled = false; return;
-    }
-    if (CONFIG.email) {
-      const body = Object.entries(d).map(([k, v]) => k + ': ' + v).join('\n');
-      location.href = 'mailto:' + CONFIG.email + '?subject=' + encodeURIComponent('LanePing demo request: ' + d.company) + '&body=' + encodeURIComponent(body);
-      return say('Your email app should open with the request ready to send.', true);
-    }
-    say('Demo requests are not switched on yet.');
-  });
+(function(){
+var r=document.getElementById('lp-trucks'); if(!r) return;
+function f(n){return '$'+n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function u(){var t=Number(r.value)||1, rate=t<=10?25:(t<=25?20:17.99);
+var v={trucks:String(t),trackMonthly:f(t*10),tmsMonthly:f(t*rate),trackFirst:f(399+t*10),tmsFirst:f(699+t*rate),tmsRate:f(rate)};
+document.querySelectorAll('[data-calc]').forEach(function(e){e.textContent=v[e.getAttribute('data-calc')];});}
+r.addEventListener('input',u); u();
 })();
 </script>
 </body>
