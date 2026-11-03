@@ -111,7 +111,7 @@ input[type=range]{accent-color:#0E1A2B}
 <p class="lp-up lp-d2" style="margin: 0; font-size: 19px; line-height: 1.55; color: #C9D3E0; max-width: 560px">LanePing runs the whole load: rate con in, truck tracked live, invoice and factoring packet out, driver statement settled. Every team gets its own login and sees only its own work.</p>
 <div class="lp-up lp-d3" style="display: flex; flex-wrap: wrap; gap: 12px; padding-top: 8px">
 <a href="#demo" class="lp-btn lp-glow" style="background: #F2B21B; color: #0E1A2B; text-decoration: none; font-weight: 700; font-size: 17px; padding: 15px 24px; border-radius: 8px">Book a 20-minute demo</a>
-<a href="#pricing" class="lp-btn" style="color: #FFFFFF; text-decoration: none; font-weight: 600; font-size: 17px; padding: 14px 22px; border-radius: 8px; border: 1px solid #3A5170">See pricing · from $10/truck</a>
+<a href="#pricing" class="lp-btn" style="color: #FFFFFF; text-decoration: none; font-weight: 600; font-size: 17px; padding: 14px 22px; border-radius: 8px; border: 1px solid #3A5170">See pricing · from $17.99/truck</a>
 </div>
 <div class="lp-up lp-d4" style="display: flex; flex-wrap: wrap; gap: 10px 22px; font-size: 14px; color: #C9D3E0; font-weight: 500">
 <span style="display: flex; align-items: center; gap: 8px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"></path></svg>No hardware</span>
@@ -462,7 +462,7 @@ input[type=range]{accent-color:#0E1A2B}
 <h3 style="margin: 0; font-size: 22px">Tracking</h3>
 <div style="display: flex; flex-wrap: wrap; gap: 28px">
 <div style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 14px; font-weight: 600; color: #4A5566">Setup, one time</span><span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 44px">$399</span></div>
-<div style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 14px; font-weight: 600; color: #4A5566">Per truck, per month</span><span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 44px">$10</span></div>
+<div style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 14px; font-weight: 600; color: #4A5566">Per truck, per month</span><span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 44px">$17.99</span></div>
 </div>
 <ul style="margin: 0; padding: 0 0 0 20px; display: flex; flex-direction: column; gap: 8px; font-size: 16px; line-height: 1.5">
 <li>Live map with late and on-time tracking</li>
@@ -508,8 +508,8 @@ input[type=range]{accent-color:#0E1A2B}
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px">
 <div style="background: #16263D; border: 1px solid #24384F; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 6px">
 <span style="font-size: 14px; font-weight: 600; color: #9FB0C5">Tracking, per month</span>
-<span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 44px; line-height: 1"><span data-calc="trackMonthly">$250.00</span></span>
-<span style="font-size: 14px; color: #C9D3E0">First month with setup: <span data-calc="trackFirst">$649.00</span></span>
+<span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 44px; line-height: 1"><span data-calc="trackMonthly">$449.75</span></span>
+<span style="font-size: 14px; color: #C9D3E0">First month with setup: <span data-calc="trackFirst">$848.75</span></span>
 </div>
 <div style="background: #16263D; border: 1px solid #F2B21B; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 6px">
 <span style="font-size: 14px; font-weight: 600; color: #9FB0C5">Full TMS, per month</span>
@@ -623,7 +623,7 @@ input[type=range]{accent-color:#0E1A2B}
 var r=document.getElementById('lp-trucks'); if(!r) return;
 function f(n){return '$'+n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
 function u(){var t=Number(r.value)||1, rate=t<=10?25:(t<=25?20:17.99);
-var v={trucks:String(t),trackMonthly:f(t*10),tmsMonthly:f(t*rate),trackFirst:f(399+t*10),tmsFirst:f(699+t*rate),tmsRate:f(rate)};
+var v={trucks:String(t),trackMonthly:f(t*17.99),tmsMonthly:f(t*rate),trackFirst:f(399+t*17.99),tmsFirst:f(699+t*rate),tmsRate:f(rate)};
 document.querySelectorAll('[data-calc]').forEach(function(e){e.textContent=v[e.getAttribute('data-calc')];});}
 r.addEventListener('input',u); u();
 })();
