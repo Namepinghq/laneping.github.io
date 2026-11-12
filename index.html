@@ -240,21 +240,61 @@ input[type=range]{accent-color:#0E1A2B}
 </div>
 </section>
 
-<section id="video" style="padding: 72px 24px 0">
-<div style="max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 22px; align-items: center; text-align: center">
-<div class="lp-reveal" style="display: flex; flex-direction: column; gap: 10px; align-items: center">
-<p style="margin: 0; font-size: 14px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: #8F6100">See it in action</p>
-<h2 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 46px; line-height: 1.05">LanePing in 90 seconds</h2>
-<p style="margin: 0; font-size: 17px; line-height: 1.55; color: #4A5566; max-width: 620px">Live truck map, a rate con read by AI, an invoice in one click, and driver pay. Turn the sound on.</p>
+<section id="video" style="position: relative; background: #0E1A2B; color: #FFFFFF; padding: 88px 24px 96px; overflow: hidden; border-top: 1px solid #24384F">
+<style>
+#video .lpv-bg{position:absolute;inset:0;pointer-events:none;background:radial-gradient(800px 420px at 50% 38%,rgba(242,178,27,.13),transparent 70%),linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px) 0 0/44px 44px,linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px) 0 0/44px 44px;-webkit-mask-image:radial-gradient(ellipse at 50% 40%,#000 35%,transparent 80%);mask-image:radial-gradient(ellipse at 50% 40%,#000 35%,transparent 80%)}
+#video .lpv-frame{position:relative;border-radius:18px;overflow:hidden;background:#0A1422;border:1px solid #2C4463;box-shadow:0 40px 120px rgba(0,0,0,.55),0 0 0 6px rgba(255,255,255,.03)}
+#video video{display:block;width:100%;height:auto;aspect-ratio:16/9;background:#0A1422}
+#video .lpv-play{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;border:0;cursor:pointer;background:radial-gradient(circle at 50% 50%,rgba(10,20,34,.35),rgba(10,20,34,.7));color:#fff;font:600 16px/1.2 Inter,system-ui,sans-serif;transition:background .25s}
+#video .lpv-play:hover{background:radial-gradient(circle at 50% 50%,rgba(10,20,34,.2),rgba(10,20,34,.55))}
+#video .lpv-btn{position:relative;width:92px;height:92px;border-radius:50%;background:#F2B21B;display:flex;align-items:center;justify-content:center;box-shadow:0 14px 40px rgba(242,178,27,.45);transition:transform .2s}
+#video .lpv-play:hover .lpv-btn{transform:scale(1.07)}
+#video .lpv-btn:before,#video .lpv-btn:after{content:"";position:absolute;inset:0;border-radius:50%;border:2px solid #F2B21B;animation:lpPulse 2.4s ease-out infinite}
+#video .lpv-btn:after{animation-delay:1.2s}
+#video .lpv-label{background:rgba(10,20,34,.75);border:1px solid rgba(255,255,255,.14);padding:9px 16px;border-radius:999px;backdrop-filter:blur(6px)}
+#video .lpv-ch{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}@media (max-width:640px){#video .lpv-ch{display:grid;grid-template-columns:1fr 1fr;width:100%}#video .lpv-ch button{flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;padding:12px}}
+#video .lpv-ch button{display:flex;align-items:center;gap:10px;cursor:pointer;background:#16263D;color:#C9D3E0;border:1px solid #2C4463;border-radius:10px;padding:11px 15px;font:600 14px/1 Inter,system-ui,sans-serif;transition:all .2s}
+#video .lpv-ch button b{font-variant-numeric:tabular-nums;color:#F2B21B;font-weight:700}
+#video .lpv-ch button:hover{border-color:#F2B21B;color:#fff}
+#video .lpv-ch button.on{background:#F2B21B;border-color:#F2B21B;color:#0E1A2B}#video .lpv-ch button.on b{color:#0E1A2B}
+@media (max-width:640px){#video h2{font-size:40px!important}#video .lpv-btn{width:70px;height:70px}#video .lpv-label{display:none}}
+</style>
+<div class="lpv-bg" aria-hidden="true"></div>
+<div style="position: relative; max-width: 1080px; margin: 0 auto; display: flex; flex-direction: column; gap: 34px; align-items: center; text-align: center">
+<div class="lp-reveal" style="display: flex; flex-direction: column; gap: 16px; align-items: center">
+<p style="margin: 0; font-size: 14px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: #F2B21B; display: flex; align-items: center; gap: 10px"><span class="lp-blink" style="width: 9px; height: 9px; border-radius: 50%; background: #22C55E"></span>Watch it work</p>
+<h2 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 58px; line-height: 1.02">Rate con in. Invoice out.<br><span style="color: #F2B21B">See it all in 90 seconds.</span></h2>
+<p style="margin: 0; font-size: 19px; line-height: 1.55; color: #C9D3E0; max-width: 680px">Trucks moving live on the map, a broker's rate con turned into a load by AI, and an invoice ready in one click. The real product, start to finish.</p>
 </div>
-<div class="lp-reveal" style="width: 100%; border-radius: 16px; overflow: hidden; background: #0E1A2B; border: 1px solid #24384F; box-shadow: 0 30px 80px rgba(14,26,43,.28)">
-<video controls playsinline preload="metadata" poster="assets/laneping-demo-poster.jpg" style="display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; background: #0E1A2B">
+<div class="lp-reveal" style="width: 100%">
+<div class="lpv-frame">
+<video id="lpv" playsinline preload="metadata" poster="assets/laneping-demo-poster.jpg">
 <source src="assets/laneping-demo.mp4" type="video/mp4">
-Your browser can't play this video. <a href="assets/laneping-demo.mp4">Download it</a>.
+<a href="assets/laneping-demo.mp4">Watch the LanePing demo</a>
 </video>
+<button type="button" class="lpv-play" id="lpvPlay" aria-label="Play the LanePing demo video with sound"><span class="lpv-btn"><svg width="34" height="34" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z" fill="#0E1A2B"></path></svg></span><span class="lpv-label">Watch the demo · 1:32 · sound on</span></button>
 </div>
-<p style="margin: 0; font-size: 13px; color: #6B7686">Demo company and data. Every name in the video is made up.</p>
 </div>
+<div class="lp-reveal lpv-ch" role="group" aria-label="Jump to a part of the video">
+<button type="button" data-t="5.9"><b>0:06</b>Live truck map</button>
+<button type="button" data-t="26.4"><b>0:26</b>AI reads the rate con</button>
+<button type="button" data-t="58.6"><b>0:58</b>One-click invoice</button>
+<button type="button" data-t="71.5"><b>1:11</b>Driver pay &amp; reports</button>
+</div>
+<div class="lp-reveal" style="display: flex; flex-wrap: wrap; gap: 14px 22px; align-items: center; justify-content: center; padding-top: 6px">
+<a href="#demo" class="lp-btn lp-glow" style="background: #F2B21B; color: #0E1A2B; text-decoration: none; font-weight: 700; font-size: 17px; padding: 15px 26px; border-radius: 8px">Book a 20-minute demo</a>
+<span style="font-size: 15px; color: #C9D3E0">We set it up with <b style="color: #FFFFFF">your own trucks</b>, usually in one day.</span>
+</div>
+</div>
+<script>
+(function(){var v=document.getElementById('lpv'),pl=document.getElementById('lpvPlay'),ch=[].slice.call(document.querySelectorAll('#video .lpv-ch button'));if(!v)return;
+function go(t){if(t!=null){try{v.currentTime=t}catch(e){}}pl.style.display='none';v.controls=true;var p=v.play();if(p&&p.catch)p.catch(function(){});}
+pl.addEventListener('click',function(){go(null)});
+ch.forEach(function(b){b.addEventListener('click',function(){go(parseFloat(b.dataset.t))})});
+v.addEventListener('timeupdate',function(){var t=v.currentTime,on=-1;ch.forEach(function(b,i){if(t>=parseFloat(b.dataset.t)-.2)on=i});ch.forEach(function(b,i){b.classList.toggle('on',i===on&&!v.paused)})});
+v.addEventListener('pause',function(){ch.forEach(function(b){b.classList.remove('on')})});
+v.addEventListener('ended',function(){v.controls=false;pl.style.display='';v.currentTime=0})})();
+</script>
 </section>
 
 <section style="padding: 64px 24px 0">
